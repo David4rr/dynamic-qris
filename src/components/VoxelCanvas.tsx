@@ -31,18 +31,18 @@ export function VoxelCanvas({
     <div className="relative w-full h-full overflow-hidden bg-[#FDFBF7] font-mono select-none">
       {/* 3D WebGL Canvas filling full viewport */}
       <Canvas
-        shadows
+        shadows={cameraMode !== 'scan'}
+        dpr={[1, 1.5]}
         gl={{
           antialias: true,
-          powerPreference: 'high-performance',
+          powerPreference: 'default',
           alpha: false,
-          logarithmicDepthBuffer: true,
         }}
         camera={{
           position: [26, 28, 26],
           fov: 38,
-          near: 0.1,
-          far: 200,
+          near: 0.5,
+          far: 150,
         }}
       >
         <VoxelScene

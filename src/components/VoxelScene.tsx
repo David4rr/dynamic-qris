@@ -18,6 +18,7 @@ interface VoxelSceneProps {
 }
 
 const dummy = new THREE.Object3D();
+const tempColor = new THREE.Color();
 
 export function VoxelScene({
   matrix,
@@ -36,6 +37,23 @@ export function VoxelScene({
     return generateSceneVoxels(matrix, theme, heightMultiplier);
   }, [matrix, theme, heightMultiplier]);
 
+  // Send matrix and color transformations to GPU ONCE when voxelInstances change (0 overhead in useFrame)
+  useEffect(() => {
+    if (meshRef.current) {
+      const mesh = meshRef.current;
+      for (let i = 0; i < voxelInstances.length; i++) {
+        const v = voxelInstances[i];
+        dummy.position.set(v.x, v.y, v.z);
+        dummy.scale.set(v.sx, v.sy, v.sz);
+        dummy.updateMatrix();
+        mesh.setMatrixAt(i, dummy.matrix);
+        tempColor.set(v.color);
+        mesh.setColorAt(i, tempColor);
+      }
+      mesh.instanceMatrix.needsUpdate = true;
+      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
+    }
+  }, [voxelInstances]);
   // Snappy transition state when switching camera modes
   const isTransitioningRef = useRef(false);
   const transitionStartRef = useRef(0);
@@ -70,16 +88,14 @@ export function VoxelScene({
     isTransitioningRef.current = true;
   }, [cameraMode, camera, size]);
 
-  // Frame Loop: Camera choreography & 1-draw-call matrix updates
+  // Ultra-Lightweight Frame Loop: 0 voxel loops when idle, smooth camera transitions
   const frameCountRef = useRef(0);
   const lastFpsTimeRef = useRef(0);
 
   useFrame(() => {
-    const now = performance.now();
-    if (lastFpsTimeRef.current === 0) {
-      lastFpsTimeRef.current = now;
-    }
+    // 1. Camera Transition during Mode Switch (350ms duration)
     if (isTransitioningRef.current) {
+      const now = performance.now();
       const elapsed = now - transitionStartRef.current;
       const progress = Math.min(elapsed / 350, 1.0);
       const ease = 1 - Math.pow(1 - progress, 3);
@@ -104,31 +120,21 @@ export function VoxelScene({
       }
     }
 
-    // 2. Apply matrix & color updates to InstancedMesh
-    if (meshRef.current) {
-      const mesh = meshRef.current;
-      for (let i = 0; i < voxelInstances.length; i++) {
-        const v = voxelInstances[i];
-        dummy.position.set(v.x, v.y, v.z);
-        dummy.scale.set(v.sx, v.sy, v.sz);
-        dummy.updateMatrix();
-        mesh.setMatrixAt(i, dummy.matrix);
-        mesh.setColorAt(i, new THREE.Color(v.color));
+    // 2. Throttled FPS Counter (0% GC overhead)
+    if (onFpsUpdate) {
+      const now = performance.now();
+      if (lastFpsTimeRef.current === 0) {
+        lastFpsTimeRef.current = now;
       }
-      mesh.instanceMatrix.needsUpdate = true;
-      if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
-    }
-
-    // 3. FPS Counter
-    frameCountRef.current++;
-    if (now - lastFpsTimeRef.current >= 500) {
-      const fps = Math.round((frameCountRef.current * 1000) / (now - lastFpsTimeRef.current));
-      onFpsUpdate?.(fps);
-      frameCountRef.current = 0;
-      lastFpsTimeRef.current = now;
+      frameCountRef.current++;
+      if (now - lastFpsTimeRef.current >= 500) {
+        const fps = Math.round((frameCountRef.current * 1000) / (now - lastFpsTimeRef.current));
+        onFpsUpdate(fps);
+        frameCountRef.current = 0;
+        lastFpsTimeRef.current = now;
+      }
     }
   });
-
   const baseplateSize = size + 2.6;
 
   return (
