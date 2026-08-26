@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, lazy, Suspense } from 'react';
 import { Header } from './components/Header';
 import { MinimalistDock } from './components/MinimalistDock';
 import { VoxelCanvas, type CameraPreset } from './components/VoxelCanvas';
@@ -12,9 +12,14 @@ import {
   type ParsedQris,
   DEFAULT_LINK_CONFIG,
 } from './lib/qris';
-import { QRScannerModal } from './components/modals/QRScannerModal';
-import { GuideModal } from './components/modals/GuideModal';
 import { VOXEL_THEMES, type VoxelTheme } from './lib/themes';
+
+const QRScannerModal = lazy(() =>
+  import('./components/modals/QRScannerModal').then((m) => ({ default: m.QRScannerModal }))
+);
+const GuideModal = lazy(() =>
+  import('./components/modals/GuideModal').then((m) => ({ default: m.GuideModal }))
+);
 export default function App() {
   // Mode State (QRIS Payment vs Link to QR)
   const [qrMode, setQrMode] = useState<QRMode>('qris');
@@ -142,20 +147,25 @@ export default function App() {
         setIsSettingsOpen={setIsMerchantSettingsOpen}
       />
 
-      {/* Interactive Guide & How-to-Use Modal */}
-      <GuideModal
-        isOpen={isGuideOpen}
-        onClose={() => setIsGuideOpen(false)}
-        onOpenMerchant={() => setIsMerchantSettingsOpen(true)}
-        currentMode={qrMode}
-      />
+      {/* Lazy-Loaded Modals (Zero impact on initial load) */}
+      <Suspense fallback={null}>
+        {isGuideOpen && (
+          <GuideModal
+            isOpen={isGuideOpen}
+            onClose={() => setIsGuideOpen(false)}
+            onOpenMerchant={() => setIsMerchantSettingsOpen(true)}
+            currentMode={qrMode}
+          />
+        )}
 
-      {/* Client-Side QRIS Scanner / Uploader Modal */}
-      <QRScannerModal
-        isOpen={isScannerOpen}
-        onClose={() => setIsScannerOpen(false)}
-        onImportStaticQris={handleImportStaticQris}
-      />
+        {isScannerOpen && (
+          <QRScannerModal
+            isOpen={isScannerOpen}
+            onClose={() => setIsScannerOpen(false)}
+            onImportStaticQris={handleImportStaticQris}
+          />
+        )}
+      </Suspense>
     </div>
   );
 }

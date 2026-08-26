@@ -8,4 +8,32 @@ export default defineConfig({
     react(),
     tailwindcss(),
   ],
+  build: {
+    target: 'esnext',
+    minify: true,
+    cssMinify: true,
+    rollupOptions: {
+      output: {
+        manualChunks: (id) => {
+          if (id.includes('node_modules')) {
+            if (id.includes('three') || id.includes('@react-three')) {
+              return 'vendor-three';
+            }
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+              return 'vendor-react';
+            }
+            if (id.includes('framer-motion') || id.includes('lucide-react') || id.includes('canvas-confetti')) {
+              return 'vendor-ui';
+            }
+            if (id.includes('idn-finlogos')) {
+              return 'vendor-logos';
+            }
+            if (id.includes('jsqr')) {
+              return 'vendor-jsqr';
+            }
+          }
+        },
+      },
+    },
+  },
 })

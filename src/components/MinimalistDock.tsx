@@ -299,31 +299,32 @@ export function MinimalistDock({
         </NeoCard>
       </div>
 
-      {/* Modular Settings Modals */}
-      {qrMode === 'qris' ? (
-        <MerchantSettingsModal
-          isOpen={showSettingsModal}
-          onClose={() => setShowSettingsModal(false)}
-          merchantName={merchantName}
-          setMerchantName={setMerchantName}
-          merchantCity={merchantCity}
-          setMerchantCity={setMerchantCity}
-          invoiceId={invoiceId}
-          setInvoiceId={setInvoiceId}
-          customStaticQris={customStaticQris}
-          parsedQris={parsedQris}
-          onClearCustomStaticQris={onClearCustomStaticQris}
-          onOpenScanner={onOpenScanner}
-          onResetToDefault={onResetToDefault}
-        />
-      ) : (
-        <LinkSettingsModal
-          isOpen={showSettingsModal}
-          onClose={() => setShowSettingsModal(false)}
-          linkConfig={linkConfig}
-          setLinkConfig={setLinkConfig}
-        />
-      )}
+      {/* Modular Settings Modals (Conditional mounting) */}
+      {showSettingsModal &&
+        (qrMode === 'qris' ? (
+          <MerchantSettingsModal
+            isOpen={showSettingsModal}
+            onClose={() => setShowSettingsModal(false)}
+            merchantName={merchantName}
+            setMerchantName={setMerchantName}
+            merchantCity={merchantCity}
+            setMerchantCity={setMerchantCity}
+            invoiceId={invoiceId}
+            setInvoiceId={setInvoiceId}
+            customStaticQris={customStaticQris}
+            parsedQris={parsedQris}
+            onClearCustomStaticQris={onClearCustomStaticQris}
+            onOpenScanner={onOpenScanner}
+            onResetToDefault={onResetToDefault}
+          />
+        ) : (
+          <LinkSettingsModal
+            isOpen={showSettingsModal}
+            onClose={() => setShowSettingsModal(false)}
+            linkConfig={linkConfig}
+            setLinkConfig={setLinkConfig}
+          />
+        ))}
     </>
   );
 }
