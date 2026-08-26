@@ -1,6 +1,6 @@
 /**
  * Export Suite for QRIScape 3D
- * Provides high-resolution PNG Scan Card generation (Canvas 2D)
+ * Provides high-resolution Neobrutalism PNG Scan Card generation (Canvas 2D)
  * and binary 3D GLTF (.glb) model exporting.
  */
 
@@ -9,6 +9,9 @@ import { GLTFExporter } from 'three/examples/jsm/exporters/GLTFExporter.js';
 import type { QRMatrixResult, ParsedQris, QRMode, LinkConfig } from './qris';
 import type { VoxelTheme } from './themes';
 import { generateVoxelDiorama } from './voxelGenerator';
+import { detectAcquirerInfo } from './qrScanner';
+import qrisSvg from 'idn-finlogos/icons/qris';
+import gpnSvg from 'idn-finlogos/icons/gpn';
 
 export interface CardExportOptions {
   qrMode?: QRMode;
@@ -21,19 +24,20 @@ export interface CardExportOptions {
   theme: VoxelTheme;
   parsedQris?: ParsedQris;
 }
+
 /**
- * Generate a high-DPI (1200x1600) printable and displayable QRIS merchant card
+ * Generate a high-DPI (1200x1600) master-grade Neobrutalism printable QRIS standee card
  */
 export async function generateScanCardPNG(options: CardExportOptions): Promise<void> {
   const {
     qrMode = 'qris',
     linkConfig,
-    merchantName = 'MERCHANT',
-    merchantCity = 'INDONESIA',
+    merchantName = '',
+    merchantCity = '',
     amount = 0,
-    invoiceId,
+    invoiceId = '',
     matrix,
-    theme,
+    parsedQris,
   } = options;
 
   const canvas = document.createElement('canvas');
@@ -45,223 +49,462 @@ export async function generateScanCardPNG(options: CardExportOptions): Promise<v
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  // 1. Background Base Card
-  ctx.fillStyle = '#ffffff';
+  // 1. Clean Studio Backdrop
+  ctx.fillStyle = '#F8FAFC';
   ctx.fillRect(0, 0, width, height);
 
+  // 2. Main Merah Putih Poster Card with Hard Solid Black Shadow
+  const cardX = 50;
+  const cardY = 50;
+  const cardW = width - 100; // 1100px
+  const cardH = height - 100; // 1500px
+
+  // Flat 14px Solid Black Shadow
+  drawNeoBox(ctx, cardX, cardY, cardW, cardH, '#FFFFFF', 14, 5);
+
   if (qrMode === 'link') {
-    // --- LINK / URL MODE SCAN CARD ---
-    // 2. Header Area
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, width, 180);
+    // =========================================================================
+    // --- LINK / URL RED & WHITE CARD ---
+    // =========================================================================
 
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 44px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    // Top Header Banner (National Red #DC2626)
+    const headerH = 150;
+    ctx.fillStyle = '#DC2626';
+    ctx.fillRect(cardX, cardY, cardW, headerH);
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 5;
+    ctx.strokeRect(cardX, cardY, cardW, headerH);
+
+    // Header Title
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '900 46px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
     ctx.textAlign = 'left';
-    ctx.fillText('WEB & SOCIAL QR', 80, 105);
+    ctx.fillText('CONNECT & SCAN', cardX + 45, cardY + 92);
 
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '500 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('Scan to Open & Connect', 510, 105);
+    // Pill Badge Right
+    drawNeoBadge(ctx, cardX + cardW - 245, cardY + 52, 200, 46, '#FFFFFF', 'DIRECT LINK');
 
-    // Cyan accent stripe
-    ctx.fillStyle = '#06b6d4';
-    ctx.fillRect(80, 125, 1040, 6);
-
-    // 3. Link Title & Description
+    // Link Title & Subtitle Card
+    const titleBoxY = cardY + 180;
     const linkTitle = (linkConfig?.title || 'WEB DESTINATION').toUpperCase();
-    const linkDesc = linkConfig?.description || 'Scan QR Code with any smartphone camera';
+    const linkDesc = linkConfig?.description || 'Scan QR Code with smartphone camera to connect';
 
-    ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 50px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    drawNeoBox(ctx, cardX + 40, titleBoxY, cardW - 80, 130, '#FFFFFF', 6, 4);
+
+    ctx.fillStyle = '#000000';
+    ctx.font = '900 44px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(linkTitle, width / 2, 280);
+    ctx.fillText(linkTitle, width / 2, titleBoxY + 58);
 
-    ctx.fillStyle = '#64748b';
-    ctx.font = '500 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(linkDesc, width / 2, 330);
+    ctx.fillStyle = '#475569';
+    ctx.font = '700 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText(linkDesc, width / 2, titleBoxY + 98);
 
-    // 4. Draw QR Code Matrix in Center
-    const qrSizePx = 760;
+    // QR Code Frame
+    const qrSizePx = 700;
     const startX = (width - qrSizePx) / 2;
-    const startY = 380;
+    const startY = cardY + 345;
 
-    // Background frame around QR code
-    ctx.fillStyle = '#f8fafc';
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.roundRect(startX - 30, startY - 30, qrSizePx + 60, qrSizePx + 60, 24);
-    ctx.fill();
-    ctx.stroke();
+    drawNeoBox(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50, '#FFFFFF', 8, 4);
+    drawNeoCornerReticles(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50);
+    drawPureBlackQRMatrix(ctx, matrix, startX, startY, qrSizePx);
 
-    const moduleSize = qrSizePx / matrix.size;
+    // Destination URL Banner
+    const urlY = cardY + 1120;
+    drawNeoBox(ctx, cardX + 40, urlY, cardW - 80, 150, '#FFFFFF', 8, 4);
 
-    for (let r = 0; r < matrix.size; r++) {
-      for (let c = 0; c < matrix.size; c++) {
-        const isDark = matrix.modules[r][c];
-        const isFinder = matrix.isFinderPattern(r, c);
-
-        const px = startX + c * moduleSize;
-        const py = startY + r * moduleSize;
-
-        if (isFinder) {
-          ctx.fillStyle = isDark ? theme.finderAnchor.outer : theme.finderAnchor.inner;
-        } else if (isDark) {
-          ctx.fillStyle = theme.darkPalette.roof;
-        } else {
-          ctx.fillStyle = theme.lightPalette.ground;
-        }
-
-        ctx.fillRect(px, py, moduleSize + 0.5, moduleSize + 0.5);
-      }
-    }
-
-    // 5. Destination URL Banner
-    const amountY = 1240;
-    ctx.fillStyle = '#f1f5f9';
-    ctx.beginPath();
-    ctx.roundRect(80, amountY, 1040, 180, 20);
-    ctx.fill();
-
-    ctx.fillStyle = '#64748b';
-    ctx.font = '600 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillStyle = '#DC2626';
+    ctx.font = '900 20px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
     ctx.textAlign = 'left';
-    ctx.fillText('TARGET DESTINATION URL', 120, amountY + 60);
-
-    ctx.fillStyle = '#0284c7';
-    ctx.textAlign = 'right';
-    ctx.fillText('DIRECT REDIRECT', 1080, amountY + 60);
+    ctx.fillText('TARGET DESTINATION URL:', cardX + 70, urlY + 48);
 
     const url = linkConfig?.url || 'https://github.com';
-    ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 36px "SF Mono", Consolas, Monaco, monospace';
-    ctx.textAlign = 'left';
-    const displayUrl = url.length > 46 ? `${url.slice(0, 43)}...` : url;
-    ctx.fillText(displayUrl, 120, amountY + 130);
+    ctx.fillStyle = '#000000';
+    ctx.font = '900 32px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+    const displayUrl = url.length > 38 ? `${url.slice(0, 35)}...` : url;
+    ctx.fillText(displayUrl, cardX + 70, urlY + 105);
 
-    // 6. Footer
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '500 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Compatible with iOS Camera, Google Lens & All Standard QR Scanners', width / 2, 1490);
-    ctx.fillText('Generated with QRIScape 3D • 100% Client-Side Verified', width / 2, 1530);
+    // Footer
+    drawNeoFooter(ctx, width, height, 'KOMPATIBEL DENGAN SEMUA APLIKASI KAMERA DAN SCANNER');
 
-    // 7. Trigger Direct Download
-    const link = document.createElement('a');
+    // Trigger Download
     const cleanTitle = (linkConfig?.title || 'link').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-    link.download = `LINK_${cleanTitle}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    downloadCanvas(canvas, `LINK_${cleanTitle}.png`);
   } else {
-    // --- STANDARD INDONESIAN QRIS PAYMENT CARD ---
-    // 2. Header Area
-    ctx.fillStyle = '#0f172a';
-    ctx.fillRect(0, 0, width, 180);
+    // =========================================================================
+    // --- OFFICIAL INDONESIAN MERAH PUTIH QRIS STANDEE CARD ---
+    // =========================================================================
 
-    // National QRIS Brand Header Text
-    ctx.fillStyle = '#ffffff';
-    ctx.font = 'bold 44px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    const acquirerInfo = parsedQris ? detectAcquirerInfo(parsedQris) : null;
+    const displayName = (merchantName || parsedQris?.merchantName || 'MERCHANT QRIS').toUpperCase();
+    const displayCity = (merchantCity || parsedQris?.merchantCity || 'INDONESIA').toUpperCase();
+    const displayNmid = acquirerInfo?.nmid || 'ID1020030040';
+    const acquirerName = acquirerInfo?.acquirerName || 'ASPI / Bank Indonesia';
+
+    // 1. Top Header Banner (Official Red #DC2626)
+    const headerH = 150;
+    ctx.fillStyle = '#DC2626';
+    ctx.fillRect(cardX, cardY, cardW, headerH);
+    ctx.strokeStyle = '#000000';
+    ctx.lineWidth = 5;
+    ctx.strokeRect(cardX, cardY, cardW, headerH);
+
+    // Left: Real Official QRIS Logo in Clean White Neo Box
+    const qrisBoxW = 220;
+    const qrisBoxH = 84;
+    const qrisX = cardX + 45;
+    const qrisY = cardY + 33;
+
+    drawNeoBox(ctx, qrisX, qrisY, qrisBoxW, qrisBoxH, '#FFFFFF', 4, 3);
+    await drawSvgStringToCanvas(ctx, qrisSvg, qrisX + 12, qrisY + 12, qrisBoxW - 24, qrisBoxH - 24);
+
+    // Header Subtitle Text
+    ctx.fillStyle = '#FFFFFF';
+    ctx.font = '900 13px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
     ctx.textAlign = 'left';
-    ctx.fillText('QRIS', 80, 105);
+    ctx.fillText('STANDAR PEMBAYARAN DIGITAL NASIONAL', qrisX + qrisBoxW + 24, cardY + 84);
 
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '500 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText('QR Code Indonesian Standard', 210, 105);
+    // Right: Real Official GPN Logo in Clean White Neo Box
+    const gpnBoxW = 120;
+    const gpnBoxH = 84;
+    const gpnX = cardX + cardW - 45 - gpnBoxW;
+    const gpnY = cardY + 33;
 
-    // Red & Black national stripe
-    ctx.fillStyle = '#ef4444';
-    ctx.fillRect(80, 125, 1040, 6);
+    drawNeoBox(ctx, gpnX, gpnY, gpnBoxW, gpnBoxH, '#FFFFFF', 4, 3);
+    await drawSvgStringToCanvas(ctx, gpnSvg, gpnX + 12, gpnY + 10, gpnBoxW - 24, gpnBoxH - 20);
 
-    // 3. Merchant Details Box
-    ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 52px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    // 2. Floating Merchant Profile Card (Solid White with Hard Shadow)
+    const merchantY = cardY + 180;
+    const merchantH = 135;
+
+    drawNeoBox(ctx, cardX + 40, merchantY, cardW - 80, merchantH, '#FFFFFF', 6, 4);
+
+    // Sticker Badge Top Left: NMID
+    drawNeoBadge(ctx, cardX + 65, merchantY - 14, 280, 30, '#DC2626', `NMID: ${displayNmid}`, '#FFFFFF');
+
+    // Sticker Badge Top Right: Acquirer
+    drawNeoBadge(ctx, cardX + cardW - 295, merchantY - 14, 230, 30, '#000000', acquirerName.toUpperCase(), '#FFFFFF');
+
+    // Merchant Name (Clean, Heavyweight, Highly Legible)
+    ctx.fillStyle = '#000000';
+    ctx.font = '900 48px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(merchantName.toUpperCase(), width / 2, 280);
+    ctx.fillText(displayName, width / 2, merchantY + 68);
 
-    ctx.fillStyle = '#64748b';
-    ctx.font = '500 28px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(`NMID: ID1020030040 • ${merchantCity.toUpperCase()}`, width / 2, 330);
+    // Location / City Tag (No emojis)
+    ctx.fillStyle = '#475569';
+    ctx.font = '800 22px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+    ctx.fillText(`KOTA: ${displayCity}`, width / 2, merchantY + 108);
 
-    // 4. Draw QR Code Matrix in Center
-    const qrSizePx = 760;
+    // 3. Central Acrylic Pure Black QR Matrix Container
+    const qrSizePx = 680;
     const startX = (width - qrSizePx) / 2;
-    const startY = 380;
+    const startY = cardY + 350;
 
-    // Background frame around QR code
-    ctx.fillStyle = '#f8fafc';
-    ctx.strokeStyle = '#e2e8f0';
-    ctx.lineWidth = 4;
-    ctx.beginPath();
-    ctx.roundRect(startX - 30, startY - 30, qrSizePx + 60, qrSizePx + 60, 24);
-    ctx.fill();
-    ctx.stroke();
+    // Solid White Canvas with Thick 5px Black Border & 10px Hard Shadow
+    drawNeoBox(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50, '#FFFFFF', 10, 5);
 
-    const moduleSize = qrSizePx / matrix.size;
+    // Neo Corner Bracket Reticles (Red #DC2626)
+    drawNeoCornerReticles(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50);
 
-    for (let r = 0; r < matrix.size; r++) {
-      for (let c = 0; c < matrix.size; c++) {
-        const isDark = matrix.modules[r][c];
-        const isFinder = matrix.isFinderPattern(r, c);
+    // Draw Pure Black (#000000) QR Modules
+    drawPureBlackQRMatrix(ctx, matrix, startX, startY, qrSizePx);
 
-        const px = startX + c * moduleSize;
-        const py = startY + r * moduleSize;
+    // 4. Merah Putih Dynamic / Static Payment Banner
+    const amountBoxY = cardY + 1090;
+    const amountBoxH = 175;
 
-        if (isFinder) {
-          ctx.fillStyle = isDark ? theme.finderAnchor.outer : theme.finderAnchor.inner;
-        } else if (isDark) {
-          ctx.fillStyle = theme.darkPalette.roof;
-        } else {
-          ctx.fillStyle = theme.lightPalette.ground;
-        }
+    if (amount > 0) {
+      // Dynamic Amount in Official Red (#DC2626)
+      drawNeoBox(ctx, cardX + 40, amountBoxY, cardW - 80, amountBoxH, '#DC2626', 8, 5);
 
-        ctx.fillRect(px, py, moduleSize + 0.5, moduleSize + 0.5);
+      // Status Pill Tag
+      drawNeoBadge(ctx, cardX + 70, amountBoxY + 20, 200, 34, '#FFFFFF', 'DYNAMIC AMOUNT', '#000000');
+
+      if (invoiceId) {
+        drawNeoBadge(ctx, cardX + cardW - 270, amountBoxY + 20, 200, 34, '#000000', `INV: ${invoiceId}`, '#FFFFFF');
       }
-    }
 
-    // 5. Amount & Invoice Details Banner
-    const amountY = 1240;
+      // Large Formatted Rupiah Amount
+      const formattedAmount = new Intl.NumberFormat('id-ID', {
+        style: 'currency',
+        currency: 'IDR',
+        maximumFractionDigits: 0,
+      }).format(amount);
 
-    ctx.fillStyle = '#f1f5f9';
-    ctx.beginPath();
-    ctx.roundRect(80, amountY, 1040, 180, 20);
-    ctx.fill();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 64px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(formattedAmount, cardX + 70, amountBoxY + 120);
 
-    ctx.fillStyle = '#64748b';
-    ctx.font = '600 24px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText('TOTAL PEMBAYARAN', 120, amountY + 60);
-
-    if (invoiceId) {
+      // Sub-label
+      ctx.fillStyle = '#FFFFFF';
+      ctx.font = '900 18px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
       ctx.textAlign = 'right';
-      ctx.fillText(`INVOICE: ${invoiceId}`, 1080, amountY + 60);
+      ctx.fillText('NOMINAL TERKUNCI OTOMATIS', cardX + cardW - 70, amountBoxY + 118);
+    } else {
+      // Static Standee Mode in Clean White with Red Accent
+      drawNeoBox(ctx, cardX + 40, amountBoxY, cardW - 80, amountBoxH, '#FFFFFF', 8, 5);
+
+      ctx.fillStyle = '#DC2626';
+      ctx.font = '900 36px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+      ctx.textAlign = 'center';
+      ctx.fillText('SCAN DAN MASUKKAN NOMINAL PEMBAYARAN', width / 2, amountBoxY + 76);
+
+      ctx.fillStyle = '#000000';
+      ctx.font = '800 20px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+      ctx.fillText('MENERIMA SEMUA APLIKASI M-BANKING DAN E-WALLET', width / 2, amountBoxY + 122);
     }
 
-    const formattedAmount = new Intl.NumberFormat('id-ID', {
-      style: 'currency',
-      currency: 'IDR',
-      maximumFractionDigits: 0,
-    }).format(amount);
+    // 5. Professional Red & White Feature Pill Badges (No emojis)
+    const badgeY = cardY + 1295;
+    const badgeW = 290;
+    const badgeGap = 20;
+    const totalBadgesW = 3 * badgeW + 2 * badgeGap;
+    const startBadgeX = cardX + (cardW - totalBadgesW) / 2;
 
-    ctx.fillStyle = '#0f172a';
-    ctx.font = 'bold 56px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.textAlign = 'left';
-    ctx.fillText(formattedAmount, 120, amountY + 130);
+    drawNeoBadge(ctx, startBadgeX, badgeY, badgeW, 44, '#FFFFFF', 'TERVERIFIKASI RESMI');
+    drawNeoBadge(ctx, startBadgeX + badgeW + badgeGap, badgeY, badgeW, 44, '#FFFFFF', 'PEMBAYARAN INSTAN');
+    drawNeoBadge(ctx, startBadgeX + (badgeW + badgeGap) * 2, badgeY, badgeW, 44, '#FFFFFF', 'SEMUA BANK DAN EWALLET');
 
     // 6. Security Footer
-    ctx.fillStyle = '#94a3b8';
-    ctx.font = '500 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.textAlign = 'center';
-    ctx.fillText('Terima Pembayaran dari Semua Aplikasi m-Banking & e-Wallet di Indonesia', width / 2, 1490);
-    ctx.fillText('Generated with QRIScape 3D • 100% Client-Side Verified', width / 2, 1530);
+    drawNeoFooter(
+      ctx,
+      width,
+      height,
+      `STANDAR RESMI ASPI DAN BANK INDONESIA • ACQUIRER: ${acquirerName.toUpperCase()}`
+    );
 
-    // 7. Trigger Direct Download
-    const link = document.createElement('a');
-    const cleanName = merchantName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-    link.download = `QRIS_${cleanName}_Rp${amount}.png`;
-    link.href = canvas.toDataURL('image/png');
-    link.click();
+    // 7. Trigger Download
+    const cleanName = displayName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    const amountTag = amount > 0 ? `_Rp${amount}` : '_Statis';
+    downloadCanvas(canvas, `QRIS_${cleanName}${amountTag}.png`);
   }
+}
+
+/**
+ * Draw a clean Neobrutalism Card Box with Hard Offset Black Shadow
+ */
+function drawNeoBox(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  bgColor: string,
+  shadowOffset = 6,
+  strokeW = 4
+) {
+  // Hard Solid Black Shadow
+  if (shadowOffset > 0) {
+    ctx.fillStyle = '#000000';
+    ctx.fillRect(x + shadowOffset, y + shadowOffset, w, h);
+  }
+
+  // Card Background
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(x, y, w, h);
+
+  // Solid Black Border
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = strokeW;
+  ctx.strokeRect(x, y, w, h);
+}
+
+/**
+ * Draw a Neobrutalist Sticker Badge
+ */
+function drawNeoBadge(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  bgColor: string,
+  text: string,
+  textColor = '#000000'
+) {
+  // Shadow
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(x + 3, y + 3, w, h);
+
+  // Body
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(x, y, w, h);
+
+  // Border
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(x, y, w, h);
+
+  // Text
+  ctx.fillStyle = textColor;
+  ctx.font = '900 13px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(text, x + w / 2, y + h / 2 + 5);
+}
+
+/**
+ * Draw decorative corner reticle brackets in Neobrutalism Merah Putih style
+ */
+function drawNeoCornerReticles(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number
+) {
+  const arm = 24;
+  const thickness = 6;
+  ctx.fillStyle = '#DC2626';
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 2;
+
+  const corners = [
+    [x - 4, y - 4, 1, 1],
+    [x + w + 4, y - 4, -1, 1],
+    [x - 4, y + h + 4, 1, -1],
+    [x + w + 4, y + h + 4, -1, -1],
+  ];
+
+  corners.forEach(([cx, cy, dx, dy]) => {
+    // Horizontal arm
+    ctx.fillRect(cx, cy, arm * dx, thickness * dy);
+    ctx.strokeRect(cx, cy, arm * dx, thickness * dy);
+    // Vertical arm
+    ctx.fillRect(cx, cy, thickness * dx, arm * dy);
+    ctx.strokeRect(cx, cy, thickness * dx, arm * dy);
+  });
+}
+
+/**
+ * Render QR Matrix in Pure Black (#000000) for standard official compliance
+ */
+function drawPureBlackQRMatrix(
+  ctx: CanvasRenderingContext2D,
+  matrix: QRMatrixResult,
+  startX: number,
+  startY: number,
+  qrSizePx: number
+) {
+  const moduleSize = qrSizePx / matrix.size;
+
+  ctx.fillStyle = '#000000';
+  for (let r = 0; r < matrix.size; r++) {
+    for (let c = 0; c < matrix.size; c++) {
+      if (matrix.modules[r][c]) {
+        const px = startX + c * moduleSize;
+        const py = startY + r * moduleSize;
+        ctx.fillRect(px, py, moduleSize + 0.35, moduleSize + 0.35);
+      }
+    }
+  }
+}
+
+/**
+ * Normalize raw SVG string with proper xmlns and explicit dimensions
+ */
+function normalizeSvg(rawSvg: string): { svg: string; width: number; height: number } {
+  let svg = rawSvg.trim();
+
+  const viewBoxMatch = svg.match(/viewBox=["']\s*([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s+([\d.-]+)\s*["']/i);
+  let vbWidth = 80;
+  let vbHeight = 30;
+  if (viewBoxMatch) {
+    vbWidth = parseFloat(viewBoxMatch[3]) || 80;
+    vbHeight = parseFloat(viewBoxMatch[4]) || 30;
+  }
+
+  if (!svg.includes('xmlns=')) {
+    svg = svg.replace('<svg', '<svg xmlns="http://www.w3.org/2000/svg"');
+  }
+  if (!/width=["']/.test(svg)) {
+    svg = svg.replace('<svg', `<svg width="${vbWidth}"`);
+  }
+  if (!/height=["']/.test(svg)) {
+    svg = svg.replace('<svg', `<svg height="${vbHeight}"`);
+  }
+
+  return { svg, width: vbWidth, height: vbHeight };
+}
+
+/**
+ * Render any SVG string directly onto Canvas 2D with aspect-ratio preservation
+ */
+function drawSvgStringToCanvas(
+  ctx: CanvasRenderingContext2D,
+  rawSvg: string,
+  targetX: number,
+  targetY: number,
+  maxW: number,
+  maxH: number
+): Promise<void> {
+  const { svg, width: naturalW, height: naturalH } = normalizeSvg(rawSvg);
+  const imgAspect = naturalW / naturalH;
+  let drawW = maxW;
+  let drawH = maxW / imgAspect;
+
+  if (drawH > maxH) {
+    drawH = maxH;
+    drawW = maxH * imgAspect;
+  }
+
+  const drawX = targetX + (maxW - drawW) / 2;
+  const drawY = targetY + (maxH - drawH) / 2;
+
+  const dataUri = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  const img = new Image();
+
+  return new Promise<void>((resolve) => {
+    img.onload = () => {
+      ctx.drawImage(img, drawX, drawY, drawW, drawH);
+      resolve();
+    };
+    img.onerror = () => {
+      const blob = new Blob([svg], { type: 'image/svg+xml;charset=utf-8' });
+      const blobUrl = URL.createObjectURL(blob);
+      const fallbackImg = new Image();
+      fallbackImg.onload = () => {
+        ctx.drawImage(fallbackImg, drawX, drawY, drawW, drawH);
+        URL.revokeObjectURL(blobUrl);
+        resolve();
+      };
+      fallbackImg.onerror = () => {
+        URL.revokeObjectURL(blobUrl);
+        resolve();
+      };
+      fallbackImg.src = blobUrl;
+    };
+    img.src = dataUri;
+  });
+}
+
+/**
+ * Common Card Neobrutalism Footer
+ */
+function drawNeoFooter(
+  ctx: CanvasRenderingContext2D,
+  width: number,
+  height: number,
+  subText: string
+) {
+  const footerY = height - 72;
+
+  ctx.fillStyle = '#000000';
+  ctx.font = '900 15px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(subText, width / 2, footerY);
+
+  ctx.fillStyle = '#64748b';
+  ctx.font = '700 12px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+  ctx.fillText('100% CLIENT-SIDE VERIFIED • GENERATED WITH QRISCAPE 3D', width / 2, footerY + 22);
+}
+
+function downloadCanvas(canvas: HTMLCanvasElement, filename: string) {
+  const link = document.createElement('a');
+  link.download = filename;
+  link.href = canvas.toDataURL('image/png');
+  link.click();
 }
 
 /**
@@ -272,80 +515,52 @@ export async function exportSceneToGLB(
   theme: VoxelTheme,
   heightMultiplier = 1.0
 ): Promise<void> {
-  const { voxels, gridSize } = generateVoxelDiorama(matrix, theme, heightMultiplier);
+  const scene = new THREE.Scene();
+  const diorama = generateVoxelDiorama(matrix, theme, heightMultiplier);
 
-  // Create isolated Three.js export scene
-  const exportScene = new THREE.Scene();
-  exportScene.name = 'QRIScape_3D_Diorama';
+  const geometry = new THREE.BoxGeometry(0.96, 0.96, 0.96);
+  const material = new THREE.MeshStandardMaterial({ roughness: 0.65, metalness: 0.05 });
+  const instancedMesh = new THREE.InstancedMesh(geometry, material, diorama.voxels.length);
+  const dummy = new THREE.Object3D();
 
-  const boxGeometry = new THREE.BoxGeometry(0.94, 1, 0.94);
-  const baseplateSize = gridSize + 2.0;
-
-  // Group all voxels
-  const voxelGroup = new THREE.Group();
-  voxelGroup.name = 'Voxel_Buildings_And_Terrain';
-
-  // Group materials by hex color to minimize meshes in GLTF
-  const materialMap = new Map<string, THREE.MeshStandardMaterial>();
-
-  for (const v of voxels) {
-    const hex = `#${v.color.getHexString()}`;
-    if (!materialMap.has(hex)) {
-      materialMap.set(
-        hex,
-        new THREE.MeshStandardMaterial({
-          color: v.color,
-          roughness: 0.4,
-          metalness: 0.1,
-        })
-      );
-    }
-    const mat = materialMap.get(hex)!;
-
-    const mesh = new THREE.Mesh(boxGeometry, mat);
-    mesh.position.set(v.x, v.y + 0.5, v.z);
-    mesh.scale.set(0.92, 0.92, 0.92);
-    mesh.name = `${v.role}_${v.gridRow}_${v.gridCol}_${v.y}`;
-    voxelGroup.add(mesh);
-
-  }
-
-  exportScene.add(voxelGroup);
-
-  // Add Baseplate
-  const baseplateMat = new THREE.MeshStandardMaterial({
-    color: new THREE.Color(theme.environment.baseplateColor),
-    roughness: 0.8,
-    metalness: 0.1,
+  diorama.voxels.forEach((v, i) => {
+    dummy.position.set(v.x, v.y * 0.9, v.z);
+    dummy.updateMatrix();
+    instancedMesh.setMatrixAt(i, dummy.matrix);
+    instancedMesh.setColorAt(i, v.color);
   });
-  const baseplateMesh = new THREE.Mesh(
-    new THREE.BoxGeometry(baseplateSize, 0.5, baseplateSize),
-    baseplateMat
-  );
-  baseplateMesh.position.set(0, -0.25, 0);
-  baseplateMesh.name = 'Diorama_Baseplate';
-  exportScene.add(baseplateMesh);
+  instancedMesh.instanceMatrix.needsUpdate = true;
+  if (instancedMesh.instanceColor) instancedMesh.instanceColor.needsUpdate = true;
 
-  // Export to GLB binary
+  scene.add(instancedMesh);
   const exporter = new GLTFExporter();
+  const options = { binary: true };
 
-  return new Promise((resolve, reject) => {
-    exporter.parse(
-      exportScene,
-      (gltf) => {
-        const blob = new Blob([gltf as ArrayBuffer], { type: 'model/gltf-binary' });
-        const link = document.createElement('a');
-        link.download = `QRIS_3D_Diorama_${theme.id}.glb`;
-        link.href = URL.createObjectURL(blob);
-        link.click();
-        URL.revokeObjectURL(link.href);
-        resolve();
-      },
-      (error) => {
-        console.error('An error occurred exporting GLTF:', error);
-        reject(error);
-      },
-      { binary: true }
-    );
-  });
+  try {
+    const glbBuffer = await new Promise<ArrayBuffer>((resolve, reject) => {
+      exporter.parse(
+        scene,
+        (gltf) => {
+          if (gltf instanceof ArrayBuffer) {
+            resolve(gltf);
+          } else {
+            reject(new Error('Expected ArrayBuffer for GLB binary export'));
+          }
+        },
+        (err) => reject(err),
+        options
+      );
+    });
+
+    const blob = new Blob([glbBuffer], { type: 'model/gltf-binary' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `QRIS_3D_Scene_${theme.id}.glb`;
+    link.click();
+    URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Failed to export GLTF scene:', error);
+    throw error;
+  }
 }

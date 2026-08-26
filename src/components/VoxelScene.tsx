@@ -590,8 +590,8 @@ export function VoxelScene({
     }
   });
 
-  // Seamless Diorama Baseplate Width
-  const baseplateSize = size + 3.0;
+  // Seamless Diorama Baseplate Width (Sized with generous quiet zone)
+  const baseplateSize = size + 2.6;
 
   return (
     <>
@@ -637,32 +637,52 @@ export function VoxelScene({
         <meshStandardMaterial roughness={0.65} metalness={0.05} />
       </instancedMesh>
 
-      {/* Seamless Pristine White Diorama Floor (Smooth, zero waffle cracks) */}
+      {/* 1. Seamless Pristine White Diorama Floor (Top surface for 100% QR optical scannability) */}
       <mesh position={[0, -0.01, 0]} receiveShadow={false}>
         <boxGeometry args={[baseplateSize, 0.04, baseplateSize]} />
-        <meshStandardMaterial color="#ffffff" roughness={0.15} metalness={0.0} />
+        <meshStandardMaterial
+          color={theme.plinth?.topColor || '#ffffff'}
+          roughness={0.2}
+          metalness={0.0}
+        />
       </mesh>
 
-      {/* Architectural Floating Diorama Pedestal Base */}
-      <group position={[0, -0.16, 0]}>
-        {/* Recessed Dark Shadow Gap */}
-        <mesh position={[0, 0.08, 0]}>
-          <boxGeometry args={[baseplateSize - 0.3, 0.06, baseplateSize - 0.3]} />
-          <meshStandardMaterial color="#09090b" roughness={0.9} metalness={0.0} />
-        </mesh>
-        {/* Chamfered Hardwood/Slate Baseboard */}
-        <mesh receiveShadow position={[0, 0, 0]}>
-          <boxGeometry args={[baseplateSize + 0.5, 0.16, baseplateSize + 0.5]} />
+      {/* 2. Harmonious Themed Perimeter Framing & Sleek Architectural Pedestal */}
+      <group position={[0, -0.05, 0]}>
+        {/* Subtle Theme-Tailored Accent Line (e.g. Lacquer Red / Teak / Pine) */}
+        <mesh position={[0, 0.03, 0]}>
+          <boxGeometry args={[baseplateSize + 0.12, 0.03, baseplateSize + 0.12]} />
           <meshStandardMaterial
-            color={theme.id === 'forest-cabin' ? '#3e2723' : theme.id === 'japanese-garden' ? '#1e293b' : '#0f172a'}
-            roughness={0.7}
+            color={theme.plinth?.accentColor || '#991b1b'}
+            roughness={0.4}
+            metalness={0.1}
+          />
+        </mesh>
+
+        {/* Master Themed Framing Base Trim (Matches Timber/Stone of Theme) */}
+        <mesh receiveShadow position={[0, -0.06, 0]}>
+          <boxGeometry args={[baseplateSize + 0.28, 0.14, baseplateSize + 0.28]} />
+          <meshStandardMaterial
+            color={theme.plinth?.frameColor || '#241711'}
+            roughness={theme.plinth?.roughness || 0.6}
             metalness={0.05}
           />
         </mesh>
-        {/* Bottom Platform Rim */}
-        <mesh position={[0, -0.1, 0]}>
-          <boxGeometry args={[baseplateSize + 0.8, 0.06, baseplateSize + 0.8]} />
-          <meshStandardMaterial color="#09090b" roughness={0.8} metalness={0.05} />
+
+        {/* Solid Sleek Architectural Pedestal Base (Clean, unified look) */}
+        <mesh position={[0, -0.22, 0]}>
+          <boxGeometry args={[baseplateSize + 0.24, 0.2, baseplateSize + 0.24]} />
+          <meshStandardMaterial
+            color={theme.plinth?.bodyColor || '#140d0a'}
+            roughness={0.8}
+            metalness={0.05}
+          />
+        </mesh>
+
+        {/* Soft Ambient Contact Shadow Drop Plane */}
+        <mesh position={[0, -0.33, 0]} rotation={[-Math.PI / 2, 0, 0]}>
+          <planeGeometry args={[baseplateSize + 3.0, baseplateSize + 3.0]} />
+          <meshBasicMaterial color="#000000" opacity={0.08} transparent />
         </mesh>
       </group>
     </>

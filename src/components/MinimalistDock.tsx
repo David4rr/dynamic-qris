@@ -9,8 +9,9 @@ import {
   Loader2,
   X,
   Globe,
+  UploadCloud,
+  ShieldCheck,
 } from 'lucide-react';
-
 import { THEME_LIST, type VoxelTheme, VOXEL_THEMES } from '../lib/themes';
 import {
   type ParsedQris,
@@ -19,10 +20,10 @@ import {
   type LinkConfig,
   DEFAULT_LINK_CONFIG,
 } from '../lib/qris';
+import { detectAcquirerInfo } from '../lib/qrScanner';
 import { generateScanCardPNG, exportSceneToGLB } from '../lib/exportUtils';
 import confetti from 'canvas-confetti';
 import { NeoButton, NeoInput, NeoCard } from './ui/neobrutalism';
-
 interface MinimalistDockProps {
   qrMode: QRMode;
   setQrMode: (mode: QRMode) => void;
@@ -42,9 +43,12 @@ interface MinimalistDockProps {
   parsedQris: ParsedQris;
   matrix: QRMatrixResult;
   onResetToDefault: () => void;
+  customStaticQris?: string | null;
+  onClearCustomStaticQris?: () => void;
+  onOpenScanner?: () => void;
+  isSettingsOpen?: boolean;
+  setIsSettingsOpen?: (open: boolean) => void;
 }
-
-
 const THEME_LABELS: Record<string, string> = {
   'japanese-garden': 'PAGODA',
   'forest-cabin': 'FOREST',
@@ -70,12 +74,20 @@ export function MinimalistDock({
   parsedQris,
   matrix,
   onResetToDefault,
+  customStaticQris,
+  onClearCustomStaticQris,
+  onOpenScanner,
+  isSettingsOpen,
+  setIsSettingsOpen,
 }: MinimalistDockProps) {
+  const acquirerInfo = parsedQris ? detectAcquirerInfo(parsedQris) : null;
   const [copied, setCopied] = useState(false);
   const [isExportingPNG, setIsExportingPNG] = useState(false);
   const [isExportingGLB, setIsExportingGLB] = useState(false);
-  const [showSettingsModal, setShowSettingsModal] = useState(false);
+  const [internalSettingsOpen, setInternalSettingsOpen] = useState(false);
 
+  const showSettingsModal = isSettingsOpen !== undefined ? isSettingsOpen : internalSettingsOpen;
+  const setShowSettingsModal = setIsSettingsOpen || setInternalSettingsOpen;
   const activeTheme = VOXEL_THEMES[selectedThemeId] || VOXEL_THEMES['japanese-garden'];
 
   const handleCopy = () => {
@@ -307,6 +319,52 @@ export function MinimalistDock({
                   <X className="w-3.5 h-3.5 stroke-[2.5]" />
                 </NeoButton>
               </div>
+
+              {customStaticQris && acquirerInfo && (
+                <div className="p-2.5 border-2 border-emerald-600 bg-emerald-50 text-xs space-y-1 shadow-[2px_2px_0px_0px_rgba(5,150,105,1)]">
+                  <div className="flex items-center justify-between">
+                    <span className="font-black text-emerald-950 flex items-center gap-1">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-700 stroke-[2.5]" />
+                      {acquirerInfo.acquirerName} Aktif
+                    </span>
+                    {onClearCustomStaticQris && (
+                      <button
+                        type="button"
+                        onClick={onClearCustomStaticQris}
+                        className="text-[10px] text-rose-700 underline font-bold hover:text-rose-900 cursor-pointer"
+                      >
+                        Reset ke Sample
+                      </button>
+                    )}
+                  </div>
+                  {acquirerInfo.nmid && (
+                    <p className="text-[10px] text-emerald-900 font-bold">
+                      NMID: {acquirerInfo.nmid}
+                    </p>
+                  )}
+                  <p className="text-[10px] text-emerald-800">
+                    Uang akan langsung masuk ke rekening merchant penampung saat di-scan.
+                  </p>
+                </div>
+              )}
+
+              {onOpenScanner && (
+                <div className="pt-1">
+                  <NeoButton
+                    type="button"
+                    variant={customStaticQris ? 'accent' : 'primary'}
+                    size="sm"
+                    onClick={() => {
+                      setShowSettingsModal(false);
+                      onOpenScanner();
+                    }}
+                    className="w-full justify-center text-xs font-black py-2"
+                  >
+                    <UploadCloud className="w-4 h-4 mr-1.5 stroke-[2.5]" />
+                    <span>{customStaticQris ? 'GANTI / SCAN QRIS ASLI LAIN' : 'SCAN / UPLOAD QRIS ASLI ANDA'}</span>
+                  </NeoButton>
+                </div>
+              )}
 
               <div className="space-y-3 text-xs">
                 <div>

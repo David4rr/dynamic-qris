@@ -1,7 +1,8 @@
-import { QrCode, Sparkles, Link2, CreditCard, Globe, Orbit, Camera } from 'lucide-react';
+import { QrCode, Sparkles, Link2, CreditCard, Globe, Orbit, Camera, BookOpen, ShieldCheck } from 'lucide-react';
 import { NeoBadge, NeoButton } from './ui/neobrutalism';
-import type { QRMode, LinkConfig } from '../lib/qris';
+import type { QRMode, LinkConfig, ParsedQris } from '../lib/qris';
 import type { CameraViewMode } from './VoxelScene';
+import { detectAcquirerInfo } from '../lib/qrScanner';
 
 interface HeaderProps {
   qrMode: QRMode;
@@ -12,7 +13,11 @@ interface HeaderProps {
   linkConfig: LinkConfig;
   cameraMode: CameraViewMode;
   onToggleCameraMode: (mode: CameraViewMode) => void;
+  customStaticQris?: string | null;
+  parsedQris?: ParsedQris;
+  onOpenGuide?: () => void;
 }
+
 export function Header({
   qrMode,
   setQrMode,
@@ -22,7 +27,11 @@ export function Header({
   linkConfig,
   cameraMode,
   onToggleCameraMode,
+  customStaticQris,
+  parsedQris,
+  onOpenGuide,
 }: HeaderProps) {
+  const acquirerInfo = parsedQris ? detectAcquirerInfo(parsedQris) : null;
   const formatIDR = (val: number) => {
     return new Intl.NumberFormat('id-ID', {
       style: 'currency',
@@ -86,6 +95,15 @@ export function Header({
                 )}
               </NeoBadge>
             )}
+            {customStaticQris && acquirerInfo && (
+              <NeoBadge variant="green" className="hidden lg:inline-flex text-xs font-black">
+                <ShieldCheck className="w-3.5 h-3.5 text-emerald-800 stroke-[2.5]" />
+                <span>{acquirerInfo.acquirerName}</span>
+                {acquirerInfo.nmid && (
+                  <span className="text-[10px] opacity-80">({acquirerInfo.nmid})</span>
+                )}
+              </NeoBadge>
+            )}
             {amount > 0 && (
               <NeoBadge variant="green" className="hidden sm:inline-flex text-xs animate-pulse">
                 <Sparkles className="w-3.5 h-3.5" />
@@ -108,8 +126,22 @@ export function Header({
         )}
       </div>
 
-      {/* Right: Camera Mode Toggles */}
+      {/* Right: Camera Mode Toggles & Scanner Trigger */}
+      {/* Right: Guide Button & Camera Mode Toggles */}
       <div className="flex items-center gap-1.5 pointer-events-auto">
+        {onOpenGuide && (
+          <NeoButton
+            variant="accent"
+            size="sm"
+            onClick={onOpenGuide}
+            title="Panduan & Cara Penggunaan"
+            className="px-2.5 py-1 text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-[#FFDE59] text-black"
+          >
+            <BookOpen className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
+            <span>CARA PAKAI</span>
+          </NeoButton>
+        )}
+
         <NeoButton
           variant={cameraMode === 'orbit' ? 'primary' : 'neutral'}
           size="sm"

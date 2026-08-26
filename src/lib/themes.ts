@@ -40,6 +40,14 @@ export interface VoxelTheme {
     baseplateColor: string;
     rimColor: string;
   };
+  // Architectural Pedestal & Floor Framing Base
+  plinth: {
+    topColor: string;
+    frameColor: string;
+    bodyColor: string;
+    accentColor: string;
+    roughness: number;
+  };
   // UI Accent Colors (Solid, no gradients)
   ui: {
     accentColor: string;
@@ -48,7 +56,6 @@ export interface VoxelTheme {
     badgeText: string;
   };
 }
-
 export const VOXEL_THEMES: Record<VoxelTheme['id'], VoxelTheme> = {
   'japanese-garden': {
     id: 'japanese-garden',
@@ -79,8 +86,15 @@ export const VOXEL_THEMES: Record<VoxelTheme['id'], VoxelTheme> = {
       ambientIntensity: 0.8,
       sunColor: '#ffffff',
       sunIntensity: 1.4,
-      baseplateColor: '#e2e8f0',
+      baseplateColor: '#ffffff',
       rimColor: '#cbd5e1',
+    },
+    plinth: {
+      topColor: '#ffffff',
+      frameColor: '#241711', // Charred Yakisugi cedar wood trim
+      bodyColor: '#140d0a', // Solid dark Japanese cedar plinth
+      accentColor: '#991b1b', // Traditional lacquer red reveal rim
+      roughness: 0.65,
     },
     ui: {
       accentColor: '#991b1b',
@@ -119,8 +133,15 @@ export const VOXEL_THEMES: Record<VoxelTheme['id'], VoxelTheme> = {
       ambientIntensity: 0.8,
       sunColor: '#ffffff',
       sunIntensity: 1.4,
-      baseplateColor: '#e2e8f0',
+      baseplateColor: '#ffffff',
       rimColor: '#cbd5e1',
+    },
+    plinth: {
+      topColor: '#ffffff',
+      frameColor: '#382213', // Rustic dark walnut timber trim
+      bodyColor: '#1c120c', // Alpine dark timber pedestal
+      accentColor: '#14532d', // Pine forest green reveal line
+      roughness: 0.7,
     },
     ui: {
       accentColor: '#15803d',
@@ -159,8 +180,15 @@ export const VOXEL_THEMES: Record<VoxelTheme['id'], VoxelTheme> = {
       ambientIntensity: 0.8,
       sunColor: '#ffffff',
       sunIntensity: 1.4,
-      baseplateColor: '#e2e8f0',
+      baseplateColor: '#ffffff',
       rimColor: '#cbd5e1',
+    },
+    plinth: {
+      topColor: '#ffffff',
+      frameColor: '#09090b', // Minimalist matte black architectural steel trim
+      bodyColor: '#18181b', // Honed charcoal travertine pedestal
+      accentColor: '#b45309', // Warm teak wood reveal line
+      roughness: 0.45,
     },
     ui: {
       accentColor: '#0f172a',
@@ -199,8 +227,15 @@ export const VOXEL_THEMES: Record<VoxelTheme['id'], VoxelTheme> = {
       ambientIntensity: 0.8,
       sunColor: '#ffffff',
       sunIntensity: 1.4,
-      baseplateColor: '#e2e8f0',
+      baseplateColor: '#ffffff',
       rimColor: '#cbd5e1',
+    },
+    plinth: {
+      topColor: '#ffffff',
+      frameColor: '#1e293b', // Weathered coastal slate & pier timber trim
+      bodyColor: '#0f172a', // Deep oceanic basalt pedestal
+      accentColor: '#dc2626', // Beacon red reveal line
+      roughness: 0.55,
     },
     ui: {
       accentColor: '#dc2626',

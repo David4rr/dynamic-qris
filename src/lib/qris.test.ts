@@ -8,6 +8,7 @@ import {
   generateQRMatrix,
   DEFAULT_SAMPLE_STATIC_QRIS,
 } from './qris';
+import { detectAcquirerInfo } from './qrScanner';
 
 describe('QRIS & EMVCo TLV Engine', () => {
   it('calculates accurate CRC-16/CCITT-FALSE', () => {
@@ -104,5 +105,13 @@ describe('QRIS & EMVCo TLV Engine', () => {
     // Center of QR should NOT be finder pattern
     const mid = Math.floor(matrix.size / 2);
     expect(matrix.isFinderPattern(mid, mid)).toBe(false);
+  });
+
+  it('detects DANA, ShopeePay, and NMID from QRIS payload', () => {
+    const danaSample = '00020101021126570011ID.DANA.WWW01189360091800000000000215ID10200300400010303UMI51440014ID.DOKU.WWW02150000000000000000303UMI5204549953033605802ID5916TOKO MAJU JAYA6007JAKARTA61051293063045E1E';
+    const parsed = parseQris(danaSample);
+    const info = detectAcquirerInfo(parsed);
+    expect(info.acquirerName).toBe('DANA Bisnis');
+    expect(info.nmid).toBe('ID1020030040001');
   });
 });
