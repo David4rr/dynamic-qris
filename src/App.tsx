@@ -12,8 +12,8 @@ import {
   type ParsedQris,
   DEFAULT_LINK_CONFIG,
 } from './lib/qris';
-import { QRScannerModal } from './components/QRScannerModal';
-import { GuideModal } from './components/GuideModal';
+import { QRScannerModal } from './components/modals/QRScannerModal';
+import { GuideModal } from './components/modals/GuideModal';
 import { VOXEL_THEMES, type VoxelTheme } from './lib/themes';
 export default function App() {
   // Mode State (QRIS Payment vs Link to QR)

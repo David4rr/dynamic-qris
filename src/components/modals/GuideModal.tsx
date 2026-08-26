@@ -8,8 +8,8 @@ import {
   CreditCard,
   Globe,
 } from 'lucide-react';
-import { NeoButton, NeoCard, NeoBadge } from './ui/neobrutalism';
-import type { QRMode } from '../lib/qris';
+import { NeoButton, NeoCard, NeoBadge } from '../ui/neobrutalism';
+import type { QRMode } from '../../lib/qris';
 
 interface GuideModalProps {
   isOpen: boolean;

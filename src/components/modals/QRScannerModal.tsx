@@ -9,14 +9,14 @@ import {
   Loader2,
   ShieldCheck,
 } from 'lucide-react';
-import { NeoButton, NeoCard, NeoBadge } from './ui/neobrutalism';
-import { parseQris, type ParsedQris } from '../lib/qris';
+import { NeoButton, NeoCard, NeoBadge } from '../ui/neobrutalism';
+import { parseQris, type ParsedQris } from '../../lib/qris';
 import {
   scanQRCodeFromImage,
   scanQRCodeFromVideo,
   detectAcquirerInfo,
   type ScanQRResult,
-} from '../lib/qrScanner';
+} from '../../lib/qrScanner';
 import confetti from 'canvas-confetti';
 
 interface QRScannerModalProps {
