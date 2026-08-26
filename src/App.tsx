@@ -147,6 +147,7 @@ export default function App() {
         isOpen={isGuideOpen}
         onClose={() => setIsGuideOpen(false)}
         onOpenMerchant={() => setIsMerchantSettingsOpen(true)}
+        currentMode={qrMode}
       />
 
       {/* Client-Side QRIS Scanner / Uploader Modal */}

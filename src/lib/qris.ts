@@ -57,9 +57,9 @@ export interface LinkConfig {
 }
 
 export const DEFAULT_LINK_CONFIG: LinkConfig = {
-  url: 'https://github.com',
-  title: 'GITHUB REPOSITORY',
-  description: 'Scan to view open-source project',
+  url: '',
+  title: '',
+  description: '',
 };
 
 export type ErrorCorrectionLevel = 'L' | 'M' | 'Q' | 'H';
