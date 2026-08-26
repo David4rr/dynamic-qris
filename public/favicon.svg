@@ -1,25 +1,19 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
-  <!-- Outer Neo-brutalism Shadow Base -->
-  <rect x="6" y="6" width="52" height="52" rx="14" fill="#09090B" />
+  <!-- Rounded Crimson Red Baseplate (#DC2626) -->
+  <rect x="2" y="2" width="60" height="60" rx="14" fill="#DC2626" />
   
-  <!-- Main Card Body -->
-  <rect x="4" y="4" width="52" height="52" rx="14" fill="#FFDE59" stroke="#09090B" stroke-width="4" />
+  <!-- Outer Pure White QR Finder Frame -->
+  <rect x="12" y="12" width="40" height="40" rx="6" fill="#FFFFFF" />
   
-  <!-- 3D Voxel QR Isometric Centerpiece -->
-  <!-- Top Face (White Ceramic) -->
-  <path d="M30 14L48 24L30 34L12 24L30 14Z" fill="#FFFFFF" stroke="#09090B" stroke-width="3" stroke-linejoin="round" />
+  <!-- Inner Red Gap -->
+  <rect x="18" y="18" width="28" height="28" rx="3" fill="#DC2626" />
   
-  <!-- Left Extrusion Face (Vermilion Red) -->
-  <path d="M12 24L30 34V48L12 38V24Z" fill="#DC2626" stroke="#09090B" stroke-width="3" stroke-linejoin="round" />
+  <!-- Center Pure White Core -->
+  <rect x="24" y="24" width="16" height="16" rx="2" fill="#FFFFFF" />
   
-  <!-- Right Extrusion Face (Deep Obsidian) -->
-  <path d="M30 34L48 24V38L30 48V34Z" fill="#18181B" stroke="#09090B" stroke-width="3" stroke-linejoin="round" />
+  <!-- Top-Right Dynamic Accent Dot (White) -->
+  <rect x="44" y="12" width="8" height="8" rx="2" fill="#FFFFFF" />
   
-  <!-- Isometric QR Finder Pattern on Top Face -->
-  <path d="M30 18L40 23.5L30 29L20 23.5L30 18Z" fill="#09090B" />
-  <path d="M30 21L35 23.8L30 26.5L25 23.8L30 21Z" fill="#FFFFFF" />
-  <path d="M30 22.5L32.5 23.9L30 25.2L27.5 23.9L30 22.5Z" fill="#DC2626" />
-  
-  <!-- Dynamic Sparkle Accent (Top Right) -->
-  <path d="M48 8L50 13L55 15L50 17L48 22L46 17L41 15L46 13L48 8Z" fill="#22C55E" stroke="#09090B" stroke-width="2" stroke-linejoin="round" />
+  <!-- Bottom-Left Dynamic Accent Dot (White) -->
+  <rect x="12" y="44" width="8" height="8" rx="2" fill="#FFFFFF" />
 </svg>
