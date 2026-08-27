@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" fill="none">
+  <!-- Dotted Studio Backdrop -->
+  <rect width="1200" height="630" fill="#F8FAFC" />
+  
+  <!-- Subtle Grid Pattern -->
+  <g fill="#E2E8F0">
+    <circle cx="60" cy="60" r="3" />
+    <circle cx="120" cy="60" r="3" />
+    <circle cx="180" cy="60" r="3" />
+    <circle cx="240" cy="60" r="3" />
+    <circle cx="300" cy="60" r="3" />
+    <circle cx="360" cy="60" r="3" />
+    <circle cx="420" cy="60" r="3" />
+    <circle cx="480" cy="60" r="3" />
+    <circle cx="540" cy="60" r="3" />
+    <circle cx="600" cy="60" r="3" />
+    <circle cx="660" cy="60" r="3" />
+    <circle cx="720" cy="60" r="3" />
+    <circle cx="780" cy="60" r="3" />
+    <circle cx="840" cy="60" r="3" />
+    <circle cx="900" cy="60" r="3" />
+    <circle cx="960" cy="60" r="3" />
+    <circle cx="1020" cy="60" r="3" />
+    <circle cx="1080" cy="60" r="3" />
+    <circle cx="1140" cy="60" r="3" />
+    
+    <circle cx="60" cy="570" r="3" />
+    <circle cx="120" cy="570" r="3" />
+    <circle cx="180" cy="570" r="3" />
+    <circle cx="240" cy="570" r="3" />
+    <circle cx="300" cy="570" r="3" />
+    <circle cx="360" cy="570" r="3" />
+    <circle cx="420" cy="570" r="3" />
+    <circle cx="480" cy="570" r="3" />
+    <circle cx="540" cy="570" r="3" />
+    <circle cx="600" cy="570" r="3" />
+    <circle cx="660" cy="570" r="3" />
+    <circle cx="720" cy="570" r="3" />
+    <circle cx="780" cy="570" r="3" />
+    <circle cx="840" cy="570" r="3" />
+    <circle cx="900" cy="570" r="3" />
+    <circle cx="960" cy="570" r="3" />
+    <circle cx="1020" cy="570" r="3" />
+    <circle cx="1080" cy="570" r="3" />
+    <circle cx="1140" cy="570" r="3" />
+  </g>
+
+  <!-- Left Main Card -->
+  <g transform="translate(60, 60)">
+    <!-- Shadow -->
+    <rect x="10" y="10" width="580" height="490" fill="#000000" rx="16" />
+    <!-- Card Body -->
+    <rect width="580" height="490" fill="#FFFDF5" stroke="#000000" stroke-width="5" rx="16" />
+    
+    <!-- Top Pill Badge -->
+    <g transform="translate(40, 40)">
+      <rect x="3" y="3" width="260" height="36" fill="#000000" />
+      <rect width="260" height="36" fill="#FFDE59" stroke="#000000" stroke-width="3" />
+      <text x="130" y="24" fill="#000000" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="13" font-weight="900" text-anchor="middle">
+        ★ 3D FINTECH ENGINE ★
+      </text>
+    </g>
+
+    <!-- Main Title -->
+    <text x="40" y="145" fill="#000000" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="64" font-weight="900" letter-spacing="-1">
+      QRISCAPE 3D
+    </text>
+    
+    <!-- Subtitle -->
+    <text x="40" y="195" fill="#DC2626" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="22" font-weight="900">
+      DYNAMIC QRIS &amp; 3D VOXEL DIORAMA
+    </text>
+
+    <!-- Description -->
+    <text x="40" y="240" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="17" font-weight="600">
+      Ubah QRIS Statis toko menjadi QRIS Dinamis otomatis.
+    </text>
+    <text x="40" y="268" fill="#334155" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="17" font-weight="600">
+      Render 3D Voxel Arsitektur &amp; Cetak Standee Kasir Resmi.
+    </text>
+
+    <!-- Feature Pills Grid -->
+    <g transform="translate(40, 310)">
+      <!-- Pill 1 -->
+      <rect x="2" y="2" width="230" height="42" fill="#000000" />
+      <rect width="230" height="42" fill="#FFFFFF" stroke="#000000" stroke-width="3" />
+      <text x="115" y="26" fill="#000000" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="12" font-weight="900" text-anchor="middle">
+        [ INJEKSI NOMINAL ASPI ]
+      </text>
+
+      <!-- Pill 2 -->
+      <g transform="translate(250, 0)">
+        <rect x="2" y="2" width="230" height="42" fill="#000000" />
+        <rect width="230" height="42" fill="#A3E635" stroke="#000000" stroke-width="3" />
+        <text x="115" y="26" fill="#000000" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="12" font-weight="900" text-anchor="middle">
+          [ 100% CLIENT-SIDE ]
+        </text>
+      </g>
+
+      <!-- Pill 3 -->
+      <g transform="translate(0, 56)">
+        <rect x="2" y="2" width="230" height="42" fill="#000000" />
+        <rect width="230" height="42" fill="#38BDF8" stroke="#000000" stroke-width="3" />
+        <text x="115" y="26" fill="#000000" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="12" font-weight="900" text-anchor="middle">
+          [ 60 FPS WEBGL THREEJS ]
+        </text>
+      </g>
+
+      <!-- Pill 4 -->
+      <g transform="translate(250, 56)">
+        <rect x="2" y="2" width="230" height="42" fill="#000000" />
+        <rect width="230" height="42" fill="#FFDE59" stroke="#000000" stroke-width="3" />
+        <text x="115" y="26" fill="#000000" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="12" font-weight="900" text-anchor="middle">
+          [ STANDEE MERAH PUTIH ]
+        </text>
+      </g>
+    </g>
+
+    <!-- Footer URL -->
+    <text x="40" y="455" fill="#64748B" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="14" font-weight="800">
+      ⚡ dynamic-qris.pages.dev
+    </text>
+  </g>
+
+  <!-- Right Visual Showcase Card -->
+  <g transform="translate(680, 60)">
+    <!-- Shadow -->
+    <rect x="10" y="10" width="460" height="490" fill="#000000" rx="16" />
+    <!-- Card Body -->
+    <rect width="460" height="490" fill="#DC2626" stroke="#000000" stroke-width="5" rx="16" />
+
+    <!-- Top Banner: QRIS & GPN -->
+    <g transform="translate(30, 25)">
+      <rect x="3" y="3" width="140" height="50" fill="#000000" rx="6" />
+      <rect width="140" height="50" fill="#FFFFFF" stroke="#000000" stroke-width="3" rx="6" />
+      <text x="70" y="34" fill="#000000" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="24" font-weight="900" text-anchor="middle">
+        QRIS
+      </text>
+    </g>
+
+    <g transform="translate(290, 25)">
+      <rect x="3" y="3" width="140" height="50" fill="#000000" rx="6" />
+      <rect width="140" height="50" fill="#FFFFFF" stroke="#000000" stroke-width="3" rx="6" />
+      <text x="70" y="34" fill="#DC2626" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="24" font-weight="900" text-anchor="middle">
+        GPN
+      </text>
+    </g>
+
+    <!-- White Inner QR Card -->
+    <g transform="translate(45, 100)">
+      <rect x="8" y="8" width="370" height="350" fill="#000000" rx="12" />
+      <rect width="370" height="350" fill="#FFFFFF" stroke="#000000" stroke-width="4" rx="12" />
+
+      <!-- QR Pattern Mockup -->
+      <!-- NW Finder -->
+      <rect x="35" y="35" width="80" height="80" fill="#000000" />
+      <rect x="47" y="47" width="56" height="56" fill="#FFFFFF" />
+      <rect x="59" y="59" width="32" height="32" fill="#000000" />
+
+      <!-- NE Finder -->
+      <rect x="255" y="35" width="80" height="80" fill="#000000" />
+      <rect x="267" y="47" width="56" height="56" fill="#FFFFFF" />
+      <rect x="279" y="59" width="32" height="32" fill="#000000" />
+
+      <!-- SW Finder -->
+      <rect x="35" y="195" width="80" height="80" fill="#000000" />
+      <rect x="47" y="207" width="56" height="56" fill="#FFFFFF" />
+      <rect x="59" y="219" width="32" height="32" fill="#000000" />
+
+      <!-- Central 3D Voxel Pagoda Badge -->
+      <g transform="translate(145, 115)">
+        <rect x="4" y="4" width="80" height="80" fill="#000000" />
+        <rect width="80" height="80" fill="#FFDE59" stroke="#000000" stroke-width="3" />
+        <!-- Miniature Pagoda silhouette -->
+        <polygon points="40,15 65,35 15,35" fill="#DC2626" stroke="#000000" stroke-width="2" />
+        <polygon points="40,32 72,50 8,50" fill="#DC2626" stroke="#000000" stroke-width="2" />
+        <rect x="22" y="50" width="36" height="22" fill="#18181B" stroke="#000000" stroke-width="2" />
+      </g>
+
+      <!-- Decorative QR Matrix Module Pixels -->
+      <rect x="145" y="35" width="16" height="16" fill="#000000" />
+      <rect x="180" y="35" width="16" height="16" fill="#000000" />
+      <rect x="215" y="35" width="16" height="16" fill="#000000" />
+      <rect x="145" y="70" width="16" height="16" fill="#000000" />
+      <rect x="215" y="70" width="16" height="16" fill="#000000" />
+
+      <rect x="35" y="145" width="16" height="16" fill="#000000" />
+      <rect x="70" y="145" width="16" height="16" fill="#000000" />
+      <rect x="105" y="145" width="16" height="16" fill="#000000" />
+
+      <rect x="255" y="145" width="16" height="16" fill="#000000" />
+      <rect x="290" y="145" width="16" height="16" fill="#000000" />
+      <rect x="325" y="145" width="16" height="16" fill="#000000" />
+
+      <rect x="145" y="225" width="16" height="16" fill="#000000" />
+      <rect x="180" y="225" width="16" height="16" fill="#000000" />
+      <rect x="215" y="225" width="16" height="16" fill="#000000" />
+
+      <rect x="255" y="195" width="80" height="80" fill="#000000" rx="4" />
+      <text x="295" y="242" fill="#FFFFFF" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="18" font-weight="900" text-anchor="middle">
+        SCAN
+      </text>
+
+      <!-- Bottom Amount Pill -->
+      <g transform="translate(50, 292)">
+        <rect x="2" y="2" width="270" height="38" fill="#000000" rx="6" />
+        <rect width="270" height="38" fill="#A3E635" stroke="#000000" stroke-width="2" rx="6" />
+        <text x="135" y="25" fill="#000000" font-family="-apple-system, BlinkMacSystemFont, monospace" font-size="14" font-weight="900" text-anchor="middle">
+          RP 25.000 • TERKUNCI
+        </text>
+      </g>
+    </g>
+  </g>
+</svg>
