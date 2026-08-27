@@ -6,9 +6,9 @@ import {
   CheckCircle2,
   ArrowRight,
   CreditCard,
-  Globe,
+  Link2,
 } from 'lucide-react';
-import { NeoButton, NeoCard, NeoBadge } from '../ui/neobrutalism';
+import { NeoButton, NeoCard } from '../ui/neobrutalism';
 import type { QRMode } from '../../lib/qris';
 
 interface GuideModalProps {
@@ -18,22 +18,31 @@ interface GuideModalProps {
   currentMode?: QRMode;
 }
 
-export function GuideModal({ isOpen, onClose, onOpenMerchant, currentMode = 'qris' }: GuideModalProps) {
+export function GuideModal({
+  isOpen,
+  onClose,
+  onOpenMerchant,
+  currentMode = 'qris',
+}: GuideModalProps) {
   const [activeTab, setActiveTab] = useState<QRMode>(currentMode);
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 font-mono select-none">
-      <NeoCard className="max-w-xl w-full p-5 space-y-4 bg-[#FFFDF5] max-h-[92vh] flex flex-col overflow-hidden">
-        {/* Modal Header */}
-        <div className="flex items-center justify-between border-b-2 border-black pb-3">
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-2.5 sm:p-4 font-mono select-none">
+      <NeoCard className="max-w-lg w-full p-3.5 sm:p-5 space-y-3 sm:space-y-3.5 bg-[#FFFDF5] max-h-[90dvh] flex flex-col overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between border-b-2 border-black pb-2.5">
           <div className="flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-black stroke-[2.5]" />
+            <div className="w-7 h-7 bg-[#FFDE59] border-2 border-black flex items-center justify-center shrink-0 shadow-[2px_2px_0px_0px_#000]">
+              <BookOpen className="w-4 h-4 text-black stroke-[2.5]" />
+            </div>
             <div>
-              <h3 className="text-sm font-black uppercase text-black">Panduan dan Cara Penggunaan</h3>
-              <p className="text-[10px] text-slate-600 font-bold">
-                Generator QRIS Dinamis dan Link QR 3D
+              <h3 className="text-xs sm:text-sm font-black uppercase text-black leading-tight">
+                PANDUAN APLIKASI
+              </h3>
+              <p className="text-[10px] text-slate-600 font-bold hidden sm:block">
+                Petunjuk Cepat Penggunaan QRIS Dinamis & Link 3D
               </p>
             </div>
           </div>
@@ -41,196 +50,163 @@ export function GuideModal({ isOpen, onClose, onOpenMerchant, currentMode = 'qri
             variant="neutral"
             size="sm"
             onClick={onClose}
-            className="p-1.5"
+            className="p-1 sm:p-1.5"
+            title="Tutup Panduan"
           >
             <X className="w-4 h-4 stroke-[2.5]" />
           </NeoButton>
         </div>
 
-        {/* Tab Switcher: QRIS vs LINK */}
-        <div className="grid grid-cols-2 gap-2 border-2 border-black p-1 bg-white">
+        {/* Mode Switcher Tabs (Ultra-Compact for Mobile) */}
+        <div className="grid grid-cols-2 gap-1.5 border-2 border-black p-1 bg-white shrink-0">
           <button
             type="button"
             onClick={() => setActiveTab('qris')}
-            className={`py-2 text-xs font-black uppercase flex items-center justify-center gap-1.5 border-2 transition-all cursor-pointer ${
+            className={`py-1.5 px-2 text-[11px] sm:text-xs font-black uppercase flex items-center justify-center gap-1 border-2 transition-all cursor-pointer ${
               activeTab === 'qris'
-                ? 'bg-[#FFDE59] text-black border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                ? 'bg-[#FFDE59] text-black border-black shadow-[2px_2px_0px_0px_#000]'
                 : 'border-transparent text-slate-600 hover:bg-amber-50'
             }`}
           >
             <CreditCard className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Mode QRIS Pembayaran</span>
+            <span>QRIS DINAMIS</span>
           </button>
 
           <button
             type="button"
             onClick={() => setActiveTab('link')}
-            className={`py-2 text-xs font-black uppercase flex items-center justify-center gap-1.5 border-2 transition-all cursor-pointer ${
+            className={`py-1.5 px-2 text-[11px] sm:text-xs font-black uppercase flex items-center justify-center gap-1 border-2 transition-all cursor-pointer ${
               activeTab === 'link'
-                ? 'bg-[#38BDF8] text-black border-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)]'
+                ? 'bg-[#38BDF8] text-black border-black shadow-[2px_2px_0px_0px_#000]'
                 : 'border-transparent text-slate-600 hover:bg-sky-50'
             }`}
           >
-            <Globe className="w-3.5 h-3.5 stroke-[2.5]" />
-            <span>Mode Link ke QR</span>
+            <Link2 className="w-3.5 h-3.5 stroke-[2.5]" />
+            <span>LINK KE QR</span>
           </button>
         </div>
 
-        {/* Modal Body: Step-by-Step Guide */}
-        <div className="flex-1 overflow-y-auto space-y-3 text-xs pr-1">
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto space-y-2.5 pr-0.5 text-xs">
           {activeTab === 'qris' ? (
             <>
-              {/* Step 1 QRIS */}
-              <div className="p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 bg-[#FFDE59] border-2 border-black flex items-center justify-center font-black text-[11px]">
-                      1
-                    </span>
-                    <span className="font-black uppercase text-black">
-                      Import QRIS Toko Anda
-                    </span>
-                  </div>
-                  <NeoBadge variant="yellow" className="text-[10px]">
-                    Langkah 1
-                  </NeoBadge>
-                </div>
-                <p className="text-slate-700 leading-relaxed text-[11px]">
-                  Buka menu <strong>MERCHANT</strong> di dock bawah, lalu pilih <strong>SCAN / UPLOAD QRIS ASLI</strong>. Anda dapat meng-upload screenshot QRIS dari <strong>DANA Bisnis</strong>, <strong>ShopeePay (Shopee Partner)</strong>, <strong>BCA Merchant</strong>, atau bank resmi mana pun.
-                </p>
-                <div className="text-[10px] text-emerald-800 bg-emerald-50 p-2 border border-emerald-300 font-bold flex items-center gap-1.5">
-                  <CheckCircle2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
-                  <span>Sistem otomatis membaca NMID dan mengunci rekening penampung asli toko Anda.</span>
-                </div>
-              </div>
-
-              {/* Step 2 QRIS */}
-              <div className="p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 bg-[#FF90E8] border-2 border-black flex items-center justify-center font-black text-[11px]">
-                      2
-                    </span>
-                    <span className="font-black uppercase text-black">
-                      Ketik Nominal Transaksi
-                    </span>
-                  </div>
-                  <NeoBadge variant="pink" className="text-[10px]">
-                    Langkah 2
-                  </NeoBadge>
-                </div>
-                <p className="text-slate-700 leading-relaxed text-[11px]">
-                  Masukkan nominal harga tagihan di kolom <strong>RP</strong> pada dock bawah (misal <code>Rp 25.000</code>). Nominal akan otomatis disuntikkan ke dalam QRIS (Tag 54) menjadi <strong>QRIS Dinamis</strong>.
-                </p>
-              </div>
-
-              {/* Step 3 QRIS */}
-              <div className="p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 bg-[#90E0EF] border-2 border-black flex items-center justify-center font-black text-[11px]">
-                      3
-                    </span>
-                    <span className="font-black uppercase text-black">
-                      Scan Layar atau Unduh Standee Cetak
-                    </span>
-                  </div>
-                  <NeoBadge variant="blue" className="text-[10px]">
-                    Langkah 3
-                  </NeoBadge>
-                </div>
-                <p className="text-slate-700 leading-relaxed text-[11px]">
-                  Pembeli tinggal memindai layar kasir Anda menggunakan aplikasi m-banking atau e-wallet apa pun. Anda juga dapat menekan tombol <strong>PNG</strong> untuk mengunduh standee cetak akrilik siap cetak beresolusi tinggi.
-                </p>
-              </div>
-
-              {/* Security & Privacy Notice */}
-              <div className="p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] space-y-1">
-                <div className="flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-black stroke-[2.5]" />
-                  <span className="text-xs font-black text-black uppercase">
-                    100% Aman dan Berjalan di Client
+              {/* Step 1 */}
+              <div className="p-2.5 sm:p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_#000] space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 bg-[#FFDE59] border-2 border-black flex items-center justify-center font-black text-[10px] shrink-0">
+                    1
+                  </span>
+                  <span className="font-black uppercase text-black text-[11px] sm:text-xs">
+                    IMPORT QRIS TOKO ANDA
                   </span>
                 </div>
-                <p className="text-[10px] text-slate-700 leading-relaxed font-medium">
-                  Aplikasi ini berjalan murni di peramban (browser) Anda. Data QRIS tidak pernah dikirim ke server luar. Seluruh pembayaran langsung masuk ke saldo rekening merchant resmi Anda.
+                <p className="text-slate-700 leading-relaxed text-[10px] sm:text-[11px] pl-7">
+                  Buka menu <strong>MERCHANT</strong> di dock bawah, lalu pilih <strong>SCAN / UPLOAD QRIS ASLI</strong>. Upload screenshot QRIS dari DANA Bisnis, ShopeePay, BCA, atau bank Anda.
+                </p>
+                <div className="ml-7 mt-1 p-1.5 bg-emerald-50 border border-emerald-300 text-[9px] sm:text-[10px] text-emerald-900 font-bold flex items-center gap-1">
+                  <CheckCircle2 className="w-3 h-3 text-emerald-600 shrink-0" />
+                  <span>Sistem otomatis mengunci NMID & rekening toko Anda.</span>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div className="p-2.5 sm:p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_#000] space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 bg-[#FF90E8] border-2 border-black flex items-center justify-center font-black text-[10px] shrink-0">
+                    2
+                  </span>
+                  <span className="font-black uppercase text-black text-[11px] sm:text-xs">
+                    KETIK NOMINAL TRANSAKSI
+                  </span>
+                </div>
+                <p className="text-slate-700 leading-relaxed text-[10px] sm:text-[11px] pl-7">
+                  Masukkan nominal harga tagihan pada kolom <strong>RP</strong> di dock bawah (misal: <code>25000</code>). Nominal otomatis disuntikkan menjadi <strong>QRIS Dinamis</strong>.
+                </p>
+              </div>
+
+              {/* Step 3 */}
+              <div className="p-2.5 sm:p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_#000] space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 bg-[#90E0EF] border-2 border-black flex items-center justify-center font-black text-[10px] shrink-0">
+                    3
+                  </span>
+                  <span className="font-black uppercase text-black text-[11px] sm:text-xs">
+                    SCAN ATAU DOWNLOAD STANDEE
+                  </span>
+                </div>
+                <p className="text-slate-700 leading-relaxed text-[10px] sm:text-[11px] pl-7">
+                  Pembeli dapat langsung scan layar Anda menggunakan m-banking atau e-wallet apa pun. Klik tombol <strong>PNG</strong> untuk unduh kartu cetak akrilik meja kasir.
+                </p>
+              </div>
+
+              {/* Security Banner */}
+              <div className="p-2 sm:p-2.5 border-2 border-black bg-amber-50 shadow-[2px_2px_0px_0px_#000] flex items-center gap-2">
+                <ShieldCheck className="w-4 h-4 text-black shrink-0 stroke-[2.5]" />
+                <p className="text-[9px] sm:text-[10px] text-slate-800 font-bold leading-tight">
+                  100% Client-Side. Saldo pembayaran langsung masuk ke rekening merchant resmi Anda.
                 </p>
               </div>
             </>
           ) : (
             <>
-              {/* Step 1 LINK */}
-              <div className="p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 bg-[#38BDF8] border-2 border-black flex items-center justify-center font-black text-[11px]">
-                      1
-                    </span>
-                    <span className="font-black uppercase text-black">
-                      Pilih Mode LINK dan Masukkan URL
-                    </span>
-                  </div>
-                  <NeoBadge variant="blue" className="text-[10px]">
-                    Langkah 1
-                  </NeoBadge>
+              {/* Step 1 Link */}
+              <div className="p-2.5 sm:p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_#000] space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 bg-[#38BDF8] border-2 border-black flex items-center justify-center font-black text-[10px] shrink-0">
+                    1
+                  </span>
+                  <span className="font-black uppercase text-black text-[11px] sm:text-xs">
+                    PILIH MODE LINK & INPUT URL
+                  </span>
                 </div>
-                <p className="text-slate-700 leading-relaxed text-[11px]">
-                  Aktifkan tombol <strong>LINK</strong> di header atas, lalu ketik alamat tautan website atau media sosial pada kolom <strong>URL</strong> di dock bawah (misal: <code>https://tokoanda.com</code> atau <code>https://instagram.com/akun</code>).
+                <p className="text-slate-700 leading-relaxed text-[10px] sm:text-[11px] pl-7">
+                  Aktifkan tombol <strong>LINK</strong> di header atas, lalu ketik alamat website atau media sosial pada kolom <strong>URL</strong> di dock bawah.
                 </p>
               </div>
 
-              {/* Step 2 LINK */}
-              <div className="p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 bg-[#FFDE59] border-2 border-black flex items-center justify-center font-black text-[11px]">
-                      2
-                    </span>
-                    <span className="font-black uppercase text-black">
-                      Atur Judul Kartu (Menu LINK CFG)
-                    </span>
-                  </div>
-                  <NeoBadge variant="yellow" className="text-[10px]">
-                    Langkah 2
-                  </NeoBadge>
+              {/* Step 2 Link */}
+              <div className="p-2.5 sm:p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_#000] space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 bg-[#FFDE59] border-2 border-black flex items-center justify-center font-black text-[10px] shrink-0">
+                    2
+                  </span>
+                  <span className="font-black uppercase text-black text-[11px] sm:text-xs">
+                    ATUR JUDUL KARTU (LINK CFG)
+                  </span>
                 </div>
-                <p className="text-slate-700 leading-relaxed text-[11px]">
-                  Klik tombol <strong>LINK CFG</strong> untuk mengatur judul banner dan teks deskripsi kartu (contoh: <code>KATALOG RESMI TOKO</code>).
+                <p className="text-slate-700 leading-relaxed text-[10px] sm:text-[11px] pl-7">
+                  Klik menu <strong>LINK CFG</strong> untuk mengatur judul banner dan teks deskripsi kartu (contoh: <code>KATALOG RESMI TOKO</code>).
                 </p>
               </div>
 
-              {/* Step 3 LINK */}
-              <div className="p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] space-y-1.5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <span className="w-5 h-5 bg-[#A3E635] border-2 border-black flex items-center justify-center font-black text-[11px]">
-                      3
-                    </span>
-                    <span className="font-black uppercase text-black">
-                      Download Kartu atau Tampilkan 3D
-                    </span>
-                  </div>
-                  <NeoBadge variant="green" className="text-[10px]">
-                    Langkah 3
-                  </NeoBadge>
+              {/* Step 3 Link */}
+              <div className="p-2.5 sm:p-3 border-2 border-black bg-white shadow-[2px_2px_0px_0px_#000] space-y-1">
+                <div className="flex items-center gap-2">
+                  <span className="w-5 h-5 bg-[#A3E635] border-2 border-black flex items-center justify-center font-black text-[10px] shrink-0">
+                    3
+                  </span>
+                  <span className="font-black uppercase text-black text-[11px] sm:text-xs">
+                    BAGIKAN ATAU CETAK KARTU
+                  </span>
                 </div>
-                <p className="text-slate-700 leading-relaxed text-[11px]">
-                  QR Code 3D akan otomatis mengarahkan pengunjung ke website tujuan ketika dipindai dengan kamera smartphone biasa atau Google Lens. Anda juga dapat mengunduh kartu cetak <strong>PNG</strong> atau model 3D <strong>GLB</strong>.
+                <p className="text-slate-700 leading-relaxed text-[10px] sm:text-[11px] pl-7">
+                  Pengunjung yang memindai QR code akan langsung dialihkan ke website tujuan. Anda juga dapat mengunduh kartu <strong>PNG</strong> atau model 3D <strong>GLB</strong>.
                 </p>
               </div>
             </>
           )}
         </div>
 
-        {/* Modal Footer */}
-        <div className="flex items-center justify-between border-t-2 border-black pt-3">
+        {/* Footer */}
+        <div className="flex flex-col-reverse sm:flex-row items-stretch sm:items-center justify-between gap-2 border-t-2 border-black pt-2.5 shrink-0">
           <NeoButton
             type="button"
             variant="neutral"
             size="sm"
             onClick={onClose}
+            className="w-full sm:w-auto py-1.5 text-xs justify-center"
           >
-            Tutup
+            TUTUP
           </NeoButton>
 
           {onOpenMerchant && (
@@ -242,7 +218,7 @@ export function GuideModal({ isOpen, onClose, onOpenMerchant, currentMode = 'qri
                 onClose();
                 onOpenMerchant();
               }}
-              className="px-4 font-black flex items-center gap-1"
+              className="w-full sm:w-auto py-1.5 px-3 text-xs font-black justify-center flex items-center gap-1.5"
             >
               <span>{activeTab === 'qris' ? 'BUKA MENU MERCHANT' : 'BUKA LINK CONFIG'}</span>
               <ArrowRight className="w-3.5 h-3.5 stroke-[2.5]" />

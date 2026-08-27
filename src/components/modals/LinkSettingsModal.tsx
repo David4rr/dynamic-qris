@@ -30,9 +30,8 @@ export function LinkSettingsModal({
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 font-mono select-none">
-      <NeoCard className="max-w-lg w-full p-5 space-y-4 bg-white">
-        {/* Modal Header */}
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-2.5 sm:p-4 font-mono select-none">
+      <NeoCard className="max-w-lg w-full p-3.5 sm:p-5 space-y-3 sm:space-y-4 bg-white max-h-[92dvh] overflow-y-auto">
         <div className="flex items-center justify-between border-b-2 border-black pb-2">
           <div className="flex items-center gap-2">
             <Globe className="w-4 h-4 text-black stroke-[2.5]" />

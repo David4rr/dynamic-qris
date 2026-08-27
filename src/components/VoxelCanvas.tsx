@@ -28,7 +28,7 @@ export function VoxelCanvas({
   const [fps, setFps] = useState<number>(60);
 
   return (
-    <div className="relative w-full h-full overflow-hidden bg-[#FDFBF7] font-mono select-none">
+    <div className="relative w-full h-full overflow-hidden bg-[#FDFBF7] font-mono select-none touch-none">
       {/* 3D WebGL Canvas filling full viewport */}
       <Canvas
         shadows={cameraMode !== 'scan'}
@@ -41,8 +41,8 @@ export function VoxelCanvas({
         camera={{
           position: [26, 28, 26],
           fov: 38,
-          near: 0.5,
-          far: 150,
+          near: 1.0,
+          far: 350,
         }}
       >
         <VoxelScene

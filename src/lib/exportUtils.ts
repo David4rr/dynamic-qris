@@ -40,100 +40,168 @@ export async function generateScanCardPNG(options: CardExportOptions): Promise<v
     parsedQris,
   } = options;
 
+  // Set Canvas Dimensions based on mode: 9:16 Story (1080x1920) for Link, 3:4 Standee (1200x1600) for QRIS
+  const isLinkMode = qrMode === 'link';
+  const width = isLinkMode ? 1080 : 1200;
+  const height = isLinkMode ? 1920 : 1600;
   const canvas = document.createElement('canvas');
-  const width = 1200;
-  const height = 1600;
   canvas.width = width;
   canvas.height = height;
 
   const ctx = canvas.getContext('2d');
   if (!ctx) return;
 
-  // 1. Clean Studio Backdrop
-  ctx.fillStyle = '#F8FAFC';
-  ctx.fillRect(0, 0, width, height);
-
-  // 2. Main Merah Putih Poster Card with Hard Solid Black Shadow
-  const cardX = 50;
-  const cardY = 50;
-  const cardW = width - 100; // 1100px
-  const cardH = height - 100; // 1500px
-
-  // Flat 14px Solid Black Shadow
-  drawNeoBox(ctx, cardX, cardY, cardW, cardH, '#FFFFFF', 14, 5);
-
-  if (qrMode === 'link') {
+  if (isLinkMode) {
     // =========================================================================
-    // --- LINK / URL RED & WHITE CARD ---
+    // --- CUTE & COOL 9:16 INSTAGRAM / WHATSAPP STORY POSTER (1080x1920) ---
     // =========================================================================
 
-    // Top Header Banner (National Red #DC2626)
-    const headerH = 150;
-    ctx.fillStyle = '#DC2626';
-    ctx.fillRect(cardX, cardY, cardW, headerH);
+    // 1. Pastel Lilac & Cream Funky Background
+    ctx.fillStyle = '#F5EEFF';
+    ctx.fillRect(0, 0, width, height);
+
+    // Playful Checkerboard Accent Pattern (Top & Bottom Bands)
+    drawCheckerBand(ctx, 0, 0, width, 28, 28, '#E9D5FF', '#F5EEFF');
+    drawCheckerBand(ctx, 0, height - 28, width, 28, 28, '#E9D5FF', '#F5EEFF');
+
+    // Floating Cute Decorative Badges (Top Left & Top Right)
+    drawAestheticSticker(ctx, 45, 65, 175, 46, '#FFDE59', '★ SCAN ME! ★', -4);
+    drawAestheticSticker(ctx, width - 225, 65, 180, 46, '#F472B6', '✦ DIRECT LINK ✦', 4);
+
+    // 2. Main Hero Story Card (Chunky Neobrutalist with Bold Violet Shadow)
+    const cardX = 45;
+    const cardY = 135;
+    const cardW = width - 90; // 990px
+    const cardH = height - 230; // 1555px
+
+    // Big 14px Solid Black Shadow
+    drawNeoBox(ctx, cardX, cardY, cardW, cardH, '#FFFDF5', 14, 5);
+
+    // 3. Funky Header Banner (Cyber Pink #F472B6 & Canary #FFDE59)
+    const bannerH = 200;
+    ctx.fillStyle = '#F472B6';
+    ctx.fillRect(cardX, cardY, cardW, bannerH);
     ctx.strokeStyle = '#000000';
     ctx.lineWidth = 5;
-    ctx.strokeRect(cardX, cardY, cardW, headerH);
+    ctx.strokeRect(cardX, cardY, cardW, bannerH);
 
-    // Header Title
-    ctx.fillStyle = '#FFFFFF';
-    ctx.font = '900 46px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText('CONNECT & SCAN', cardX + 45, cardY + 92);
+    // Small Top Pill on Banner
+    drawNeoBadge(ctx, width / 2 - 110, cardY + 20, 220, 34, '#FFDE59', '⚡ QUICK ACCESS ⚡', '#000000');
 
-    // Pill Badge Right
-    drawNeoBadge(ctx, cardX + cardW - 245, cardY + 52, 200, 46, '#FFFFFF', 'DIRECT LINK');
-
-    // Link Title & Subtitle Card
-    const titleBoxY = cardY + 180;
-    const linkTitle = (linkConfig?.title || 'WEB DESTINATION').toUpperCase();
-    const linkDesc = linkConfig?.description || 'Scan QR Code with smartphone camera to connect';
-
-    drawNeoBox(ctx, cardX + 40, titleBoxY, cardW - 80, 130, '#FFFFFF', 6, 4);
-
+    // Big Funky Headline
+    const linkTitle = (linkConfig?.title || "LET'S CONNECT!").toUpperCase();
     ctx.fillStyle = '#000000';
-    ctx.font = '900 44px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.font = '900 52px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, sans-serif';
     ctx.textAlign = 'center';
-    ctx.fillText(linkTitle, width / 2, titleBoxY + 58);
+    const displayTitle = linkTitle.length > 22 ? `${linkTitle.slice(0, 20)}...` : linkTitle;
+    ctx.fillText(displayTitle, width / 2, cardY + 115);
 
-    ctx.fillStyle = '#475569';
-    ctx.font = '700 22px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
-    ctx.fillText(linkDesc, width / 2, titleBoxY + 98);
+    // Subtitle
+    const linkDesc = linkConfig?.description || 'Scan dengan kamera HP-mu untuk buka tautan!';
+    ctx.fillStyle = '#000000';
+    ctx.font = '800 20px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
+    ctx.fillText(linkDesc, width / 2, cardY + 160);
 
-    // QR Code Frame
-    const qrSizePx = 700;
+    // 4. Central Cute Floating QR Code Container
+    const qrSizePx = 680;
     const startX = (width - qrSizePx) / 2;
-    const startY = cardY + 345;
+    const startY = cardY + 260;
 
-    drawNeoBox(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50, '#FFFFFF', 8, 4);
-    drawNeoCornerReticles(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50);
+    // Chunky White QR Box with 10px Hard Black Shadow
+    drawNeoBox(ctx, startX - 30, startY - 30, qrSizePx + 60, qrSizePx + 60, '#FFFFFF', 12, 5);
+
+    // Playful Corner Brackets (Bubblegum Pink)
+    drawNeoCornerReticles(ctx, startX - 30, startY - 30, qrSizePx + 60, qrSizePx + 60, '#F472B6');
+
+    // Draw Pure Black (#000000) High-Contrast QR Matrix
     drawPureBlackQRMatrix(ctx, matrix, startX, startY, qrSizePx);
 
-    // Destination URL Banner
-    const urlY = cardY + 1120;
-    drawNeoBox(ctx, cardX + 40, urlY, cardW - 80, 150, '#FFFFFF', 8, 4);
+    // Floating Corner Sticker Badge on QR
+    drawAestheticSticker(ctx, startX + qrSizePx - 70, startY - 48, 120, 36, '#A3E635', 'TAP TO OPEN', 6);
 
-    ctx.fillStyle = '#DC2626';
-    ctx.font = '900 20px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
-    ctx.textAlign = 'left';
-    ctx.fillText('TARGET DESTINATION URL:', cardX + 70, urlY + 48);
+    // 5. Cute Search Capsule / URL Pill Bar
+    const urlBoxY = cardY + 1010;
+    const urlBoxH = 190;
 
-    const url = linkConfig?.url || 'https://github.com';
+    // Container Box in Canary Yellow (#FFDE59)
+    drawNeoBox(ctx, cardX + 40, urlBoxY, cardW - 80, urlBoxH, '#FFDE59', 8, 5);
+
+    // Browser Pill Header
     ctx.fillStyle = '#000000';
+    ctx.font = '900 18px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText('TAUTAN TUJUAN (URL):', cardX + 70, urlBoxY + 45);
+    // Mini Status Tag Right
+    drawNeoBadge(ctx, cardX + cardW - 240, urlBoxY + 20, 160, 32, '#FFFFFF', 'TAP & HOLD', '#000000');
+
+    // URL Display Box (White Pill inside Yellow)
+    const pillInnerY = urlBoxY + 75;
+    drawNeoBox(ctx, cardX + 65, pillInnerY, cardW - 130, 85, '#FFFFFF', 4, 3);
+
+    const rawUrl = linkConfig?.url || 'https://';
+    ctx.fillStyle = '#0F172A';
     ctx.font = '900 32px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
-    const displayUrl = url.length > 38 ? `${url.slice(0, 35)}...` : url;
-    ctx.fillText(displayUrl, cardX + 70, urlY + 105);
+    ctx.textAlign = 'left';
+    const displayUrl = rawUrl.length > 34 ? `${rawUrl.slice(0, 31)}...` : rawUrl;
+    ctx.fillText(displayUrl, cardX + 90, pillInnerY + 54);
 
-    // Footer
-    drawNeoFooter(ctx, width, height, 'KOMPATIBEL DENGAN SEMUA APLIKASI KAMERA DAN SCANNER');
+    // 6. Authentic Instagram / WhatsApp Story Link Sticker Mockup
+    const stickerY = cardY + 1235;
+    const stickerW = cardW - 140; // 850px
+    const stickerH = 95;
+    const stickerX = cardX + 70;
 
+    // Floating Link Sticker Capsule with Neobrutalism 8px Shadow
+    drawNeoBox(ctx, stickerX, stickerY, stickerW, stickerH, '#FFFFFF', 8, 4);
+
+    // Left Link Badge (Cyan Blue #38BDF8)
+    drawNeoBadge(ctx, stickerX + 24, stickerY + 22, 70, 50, '#38BDF8', 'LINK', '#000000');
+    const textOffsetX = stickerX + 110;
+    // Center Link Text & Domain
+    const cleanDomain = rawUrl.replace(/^https?:\/\//, '').split('/')[0] || 'KUNJUNGI TAUTAN';
+    ctx.fillStyle = '#0F172A';
+    ctx.font = '900 30px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+    ctx.textAlign = 'left';
+    ctx.fillText(cleanDomain.toUpperCase(), textOffsetX, stickerY + 58);
+
+    // Right CTA Pill Button (Electric Lime #A3E635)
+    const ctaW = 230;
+    const ctaX = stickerX + stickerW - ctaW - 24;
+    drawNeoBadge(ctx, ctaX, stickerY + 24, ctaW, 46, '#A3E635', 'BUKA TAUTAN ↗', '#000000');
+
+    // 7. Clean Story Callout (Aesthetic, Zero Clutter)
+    ctx.fillStyle = '#475569';
+    ctx.font = '800 18px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+    ctx.textAlign = 'center';
+    ctx.fillText('SCREENSHOT CERITA INI & PINDAI LANGSUNG DARI GALERI HP', width / 2, cardY + 1380);
+
+    // Story Footer
+    drawNeoFooter(
+      ctx,
+      width,
+      height - 40,
+      'SHARE KE INSTAGRAM & WHATSAPP STORY • QRISCAPE 3D'
+    );
     // Trigger Download
-    const cleanTitle = (linkConfig?.title || 'link').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
-    downloadCanvas(canvas, `LINK_${cleanTitle}.png`);
+    const cleanTitle = (linkConfig?.title || 'story').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
+    downloadCanvas(canvas, `STORY_${cleanTitle}.png`);
   } else {
     // =========================================================================
-    // --- OFFICIAL INDONESIAN MERAH PUTIH QRIS STANDEE CARD ---
+    // --- OFFICIAL INDONESIAN MERAH PUTIH QRIS STANDEE CARD (1200x1600) ---
     // =========================================================================
+
+    // 1. Clean Studio Backdrop
+    ctx.fillStyle = '#F8FAFC';
+    ctx.fillRect(0, 0, width, height);
+
+    // 2. Main Merah Putih Poster Card with Hard Solid Black Shadow
+    const cardX = 50;
+    const cardY = 50;
+    const cardW = width - 100; // 1100px
+    const cardH = height - 100; // 1500px
+
+    // Flat 14px Solid Black Shadow
+    drawNeoBox(ctx, cardX, cardY, cardW, cardH, '#FFFFFF', 14, 5);
 
     const acquirerInfo = parsedQris ? detectAcquirerInfo(parsedQris) : null;
     const displayName = (merchantName || parsedQris?.merchantName || 'MERCHANT QRIS').toUpperCase();
@@ -141,7 +209,7 @@ export async function generateScanCardPNG(options: CardExportOptions): Promise<v
     const displayNmid = acquirerInfo?.nmid || 'ID1020030040';
     const acquirerName = acquirerInfo?.acquirerName || 'ASPI / Bank Indonesia';
 
-    // 1. Top Header Banner (Official Red #DC2626)
+    // Top Header Banner (Official Red #DC2626)
     const headerH = 150;
     ctx.fillStyle = '#DC2626';
     ctx.fillRect(cardX, cardY, cardW, headerH);
@@ -173,59 +241,45 @@ export async function generateScanCardPNG(options: CardExportOptions): Promise<v
     drawNeoBox(ctx, gpnX, gpnY, gpnBoxW, gpnBoxH, '#FFFFFF', 4, 3);
     await drawSvgStringToCanvas(ctx, gpnSvg, gpnX + 12, gpnY + 10, gpnBoxW - 24, gpnBoxH - 20);
 
-    // 2. Floating Merchant Profile Card (Solid White with Hard Shadow)
+    // Floating Merchant Profile Card
     const merchantY = cardY + 180;
     const merchantH = 135;
 
     drawNeoBox(ctx, cardX + 40, merchantY, cardW - 80, merchantH, '#FFFFFF', 6, 4);
 
-    // Sticker Badge Top Left: NMID
     drawNeoBadge(ctx, cardX + 65, merchantY - 14, 280, 30, '#DC2626', `NMID: ${displayNmid}`, '#FFFFFF');
-
-    // Sticker Badge Top Right: Acquirer
     drawNeoBadge(ctx, cardX + cardW - 295, merchantY - 14, 230, 30, '#000000', acquirerName.toUpperCase(), '#FFFFFF');
 
-    // Merchant Name (Clean, Heavyweight, Highly Legible)
     ctx.fillStyle = '#000000';
     ctx.font = '900 48px -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif';
     ctx.textAlign = 'center';
     ctx.fillText(displayName, width / 2, merchantY + 68);
 
-    // Location / City Tag (No emojis)
     ctx.fillStyle = '#475569';
     ctx.font = '800 22px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
     ctx.fillText(`KOTA: ${displayCity}`, width / 2, merchantY + 108);
 
-    // 3. Central Acrylic Pure Black QR Matrix Container
+    // Central Acrylic Pure Black QR Matrix
     const qrSizePx = 680;
     const startX = (width - qrSizePx) / 2;
     const startY = cardY + 350;
 
-    // Solid White Canvas with Thick 5px Black Border & 10px Hard Shadow
     drawNeoBox(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50, '#FFFFFF', 10, 5);
-
-    // Neo Corner Bracket Reticles (Red #DC2626)
-    drawNeoCornerReticles(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50);
-
-    // Draw Pure Black (#000000) QR Modules
+    drawNeoCornerReticles(ctx, startX - 25, startY - 25, qrSizePx + 50, qrSizePx + 50, '#DC2626');
     drawPureBlackQRMatrix(ctx, matrix, startX, startY, qrSizePx);
 
-    // 4. Merah Putih Dynamic / Static Payment Banner
+    // Payment Banner
     const amountBoxY = cardY + 1090;
     const amountBoxH = 175;
 
     if (amount > 0) {
-      // Dynamic Amount in Official Red (#DC2626)
       drawNeoBox(ctx, cardX + 40, amountBoxY, cardW - 80, amountBoxH, '#DC2626', 8, 5);
-
-      // Status Pill Tag
       drawNeoBadge(ctx, cardX + 70, amountBoxY + 20, 200, 34, '#FFFFFF', 'DYNAMIC AMOUNT', '#000000');
 
       if (invoiceId) {
         drawNeoBadge(ctx, cardX + cardW - 270, amountBoxY + 20, 200, 34, '#000000', `INV: ${invoiceId}`, '#FFFFFF');
       }
 
-      // Large Formatted Rupiah Amount
       const formattedAmount = new Intl.NumberFormat('id-ID', {
         style: 'currency',
         currency: 'IDR',
@@ -237,13 +291,11 @@ export async function generateScanCardPNG(options: CardExportOptions): Promise<v
       ctx.textAlign = 'left';
       ctx.fillText(formattedAmount, cardX + 70, amountBoxY + 120);
 
-      // Sub-label
       ctx.fillStyle = '#FFFFFF';
       ctx.font = '900 18px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
       ctx.textAlign = 'right';
       ctx.fillText('NOMINAL TERKUNCI OTOMATIS', cardX + cardW - 70, amountBoxY + 118);
     } else {
-      // Static Standee Mode in Clean White with Red Accent
       drawNeoBox(ctx, cardX + 40, amountBoxY, cardW - 80, amountBoxH, '#FFFFFF', 8, 5);
 
       ctx.fillStyle = '#DC2626';
@@ -256,7 +308,7 @@ export async function generateScanCardPNG(options: CardExportOptions): Promise<v
       ctx.fillText('MENERIMA SEMUA APLIKASI M-BANKING DAN E-WALLET', width / 2, amountBoxY + 122);
     }
 
-    // 5. Professional Red & White Feature Pill Badges (No emojis)
+    // Feature Pills
     const badgeY = cardY + 1295;
     const badgeW = 290;
     const badgeGap = 20;
@@ -267,7 +319,7 @@ export async function generateScanCardPNG(options: CardExportOptions): Promise<v
     drawNeoBadge(ctx, startBadgeX + badgeW + badgeGap, badgeY, badgeW, 44, '#FFFFFF', 'PEMBAYARAN INSTAN');
     drawNeoBadge(ctx, startBadgeX + (badgeW + badgeGap) * 2, badgeY, badgeW, 44, '#FFFFFF', 'SEMUA BANK DAN EWALLET');
 
-    // 6. Security Footer
+    // Footer
     drawNeoFooter(
       ctx,
       width,
@@ -275,7 +327,7 @@ export async function generateScanCardPNG(options: CardExportOptions): Promise<v
       `STANDAR RESMI ASPI DAN BANK INDONESIA • ACQUIRER: ${acquirerName.toUpperCase()}`
     );
 
-    // 7. Trigger Download
+    // Trigger Download
     const cleanName = displayName.replace(/[^a-zA-Z0-9]/g, '_').toLowerCase();
     const amountTag = amount > 0 ? `_Rp${amount}` : '_Statis';
     downloadCanvas(canvas, `QRIS_${cleanName}${amountTag}.png`);
@@ -312,6 +364,74 @@ function drawNeoBox(
 }
 
 /**
+ * Draw a decorative checkered band pattern
+ */
+function drawCheckerBand(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  size: number,
+  color1: string,
+  color2: string
+) {
+  const cols = Math.ceil(w / size);
+  const rows = Math.ceil(h / size);
+  for (let r = 0; r < rows; r++) {
+    for (let c = 0; c < cols; c++) {
+      ctx.fillStyle = (r + c) % 2 === 0 ? color1 : color2;
+      ctx.fillRect(x + c * size, y + r * size, size, size);
+    }
+  }
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(x, y, w, h);
+}
+
+/**
+ * Draw a cute rotated aesthetic sticker
+ */
+function drawAestheticSticker(
+  ctx: CanvasRenderingContext2D,
+  x: number,
+  y: number,
+  w: number,
+  h: number,
+  bgColor: string,
+  text: string,
+  angleDeg = 0
+) {
+  ctx.save();
+  ctx.translate(x + w / 2, y + h / 2);
+  if (angleDeg !== 0) {
+    ctx.rotate((angleDeg * Math.PI) / 180);
+  }
+  ctx.translate(-w / 2, -h / 2);
+
+  // Hard solid black offset shadow
+  ctx.fillStyle = '#000000';
+  ctx.fillRect(4, 4, w, h);
+
+  // Body
+  ctx.fillStyle = bgColor;
+  ctx.fillRect(0, 0, w, h);
+
+  // Border
+  ctx.strokeStyle = '#000000';
+  ctx.lineWidth = 3;
+  ctx.strokeRect(0, 0, w, h);
+
+  // Text
+  ctx.fillStyle = '#000000';
+  ctx.font = '900 13px -apple-system, BlinkMacSystemFont, "SF Mono", Consolas, monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText(text, w / 2, h / 2 + 5);
+
+  ctx.restore();
+}
+
+/**
  * Draw a Neobrutalist Sticker Badge
  */
 function drawNeoBadge(
@@ -345,21 +465,21 @@ function drawNeoBadge(
 }
 
 /**
- * Draw decorative corner reticle brackets in Neobrutalism Merah Putih style
+ * Draw decorative corner reticle brackets in Neobrutalism style
  */
 function drawNeoCornerReticles(
   ctx: CanvasRenderingContext2D,
   x: number,
   y: number,
   w: number,
-  h: number
+  h: number,
+  color = '#DC2626'
 ) {
   const arm = 24;
   const thickness = 6;
-  ctx.fillStyle = '#DC2626';
+  ctx.fillStyle = color;
   ctx.strokeStyle = '#000000';
   ctx.lineWidth = 2;
-
   const corners = [
     [x - 4, y - 4, 1, 1],
     [x + w + 4, y - 4, -1, 1],

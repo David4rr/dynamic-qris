@@ -168,9 +168,8 @@ export function QRScannerModal({ isOpen, onClose, onImportStaticQris }: QRScanne
   const acquirerInfo = scannedResult?.parsed ? detectAcquirerInfo(scannedResult.parsed) : null;
 
   return (
-    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 font-mono select-none">
-      <NeoCard className="max-w-lg w-full p-5 space-y-4 bg-[#FFFDF5] max-h-[92vh] flex flex-col overflow-hidden">
-        {/* Modal Header */}
+    <div className="fixed inset-0 bg-black/60 backdrop-blur-xs z-50 flex items-center justify-center p-2.5 sm:p-4 font-mono select-none">
+      <NeoCard className="max-w-lg w-full p-3.5 sm:p-5 space-y-3 sm:space-y-4 bg-[#FFFDF5] max-h-[92dvh] flex flex-col overflow-hidden">
         <div className="flex items-center justify-between border-b-2 border-black pb-3">
           <div className="flex items-center gap-2">
             <ShieldCheck className="w-5 h-5 text-black stroke-[2.5]" />

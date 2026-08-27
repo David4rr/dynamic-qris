@@ -29,6 +29,16 @@
   background: #94a3b8;
   border-radius: 2px;
 }
+
+/* Hide scrollbar utility */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
 /* Remove number input up/down stepper arrows globally */
 input[type="number"]::-webkit-inner-spin-button,
 input[type="number"]::-webkit-outer-spin-button {
@@ -39,4 +49,3 @@ input[type="number"] {
   -moz-appearance: textfield;
   appearance: textfield;
 }
-

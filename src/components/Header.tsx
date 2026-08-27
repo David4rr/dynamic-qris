@@ -49,11 +49,11 @@ export function Header({
   };
 
   return (
-    <header className="absolute top-4 left-4 right-4 z-40 flex flex-wrap items-center justify-between gap-2 pointer-events-none font-mono">
+    <header className="absolute top-2 sm:top-4 left-2 sm:left-4 right-2 sm:right-4 z-40 flex flex-wrap items-center justify-between gap-1.5 pointer-events-none font-mono">
       {/* Left: Brand + Mode Switcher + Status Badges */}
-      <div className="flex flex-wrap items-center gap-2 pointer-events-auto">
-        <NeoBadge variant="yellow" className="text-xs sm:text-sm">
-          <QrCode className="w-4 h-4" />
+      <div className="flex flex-wrap items-center gap-1 sm:gap-2 pointer-events-auto">
+        <NeoBadge variant="yellow" className="text-[11px] sm:text-xs py-1 px-2">
+          <QrCode className="w-3.5 h-3.5" />
           <span>QRISCAPE 3D</span>
         </NeoBadge>
 
@@ -64,9 +64,9 @@ export function Header({
             size="sm"
             variant={qrMode === 'qris' ? 'primary' : 'neutral'}
             onClick={() => setQrMode('qris')}
-            className="px-2.5 py-1 text-xs font-black"
+            className="px-2 py-1 text-[11px] sm:text-xs font-black"
           >
-            <CreditCard className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
+            <CreditCard className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.5]" />
             <span>QRIS</span>
           </NeoButton>
           <NeoButton
@@ -74,9 +74,9 @@ export function Header({
             size="sm"
             variant={qrMode === 'link' ? 'primary' : 'neutral'}
             onClick={() => setQrMode('link')}
-            className="px-2.5 py-1 text-xs font-black"
+            className="px-2 py-1 text-[11px] sm:text-xs font-black"
           >
-            <Link2 className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
+            <Link2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.5]" />
             <span>LINK</span>
           </NeoButton>
         </div>
@@ -128,17 +128,18 @@ export function Header({
 
       {/* Right: Camera Mode Toggles & Scanner Trigger */}
       {/* Right: Guide Button & Camera Mode Toggles */}
-      <div className="flex items-center gap-1.5 pointer-events-auto">
+      <div className="flex items-center gap-1 sm:gap-1.5 pointer-events-auto">
         {onOpenGuide && (
           <NeoButton
             variant="accent"
             size="sm"
             onClick={onOpenGuide}
             title="Panduan & Cara Penggunaan"
-            className="px-2.5 py-1 text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-[#FFDE59] text-black"
+            className="px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-black shadow-[2px_2px_0px_0px_rgba(0,0,0,1)] bg-[#FFDE59] text-black"
           >
-            <BookOpen className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
-            <span>CARA PAKAI</span>
+            <BookOpen className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.5]" />
+            <span className="hidden sm:inline">CARA PAKAI</span>
+            <span className="sm:hidden">PANDUAN</span>
           </NeoButton>
         )}
 
@@ -147,10 +148,11 @@ export function Header({
           size="sm"
           onClick={() => onToggleCameraMode('orbit')}
           title="3D Free Orbit View"
-          className="px-2.5 py-1 text-xs"
+          className="px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs"
         >
-          <Orbit className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
-          <span>3D ORBIT</span>
+          <Orbit className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.5]" />
+          <span>3D</span>
+          <span className="hidden sm:inline"> ORBIT</span>
         </NeoButton>
 
         <NeoButton
@@ -158,10 +160,11 @@ export function Header({
           size="sm"
           onClick={() => onToggleCameraMode('scan')}
           title="Perpendicular Top-Down Scan View"
-          className="px-2.5 py-1 text-xs"
+          className="px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs"
         >
-          <Camera className="w-3.5 h-3.5 mr-1 stroke-[2.5]" />
-          <span>SNAP TO SCAN</span>
+          <Camera className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.5]" />
+          <span>SCAN</span>
+          <span className="hidden sm:inline"> VIEW</span>
         </NeoButton>
       </div>
     </header>

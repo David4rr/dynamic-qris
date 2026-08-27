@@ -29,8 +29,10 @@ export function VoxelScene({
 }: VoxelSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const meshRef = useRef<THREE.InstancedMesh>(null);
-  const { camera } = useThree();
+  const { camera, size: viewportSize } = useThree();
   const { size } = matrix;
+  const isPortrait = viewportSize.width < viewportSize.height;
+  const aspect = viewportSize.width / Math.max(viewportSize.height, 1);
 
   // Procedural Master 3D Voxel Construction (Modular Architecture & Terrain)
   const voxelInstances = useMemo(() => {
@@ -54,40 +56,75 @@ export function VoxelScene({
       if (mesh.instanceColor) mesh.instanceColor.needsUpdate = true;
     }
   }, [voxelInstances]);
-  // Snappy transition state when switching camera modes
+
+  // Camera transition state
   const isTransitioningRef = useRef(false);
   const transitionStartRef = useRef(0);
   const startCamPosRef = useRef(new THREE.Vector3());
   const startCamUpRef = useRef(new THREE.Vector3());
   const startTargetRef = useRef(new THREE.Vector3());
+  const prevCameraModeRef = useRef(cameraMode);
 
   const targetCamPos = useMemo(() => {
+    const tanHalfFov = Math.tan((38 / 2) * (Math.PI / 180));
+    const effectiveAspect = Math.max(aspect, 0.35);
+
     if (cameraMode === 'scan') {
-      return new THREE.Vector3(0, size * 2.0, 0);
+      const requiredSpan = (size + 3.2) * 1.2;
+      const heightForWidth = requiredSpan / (2 * tanHalfFov * effectiveAspect);
+      const heightForHeight = requiredSpan / (2 * tanHalfFov);
+      const scanHeight = Math.max(heightForWidth, heightForHeight);
+      return new THREE.Vector3(0, scanHeight, 0);
     }
-    const dist = size * 0.95;
-    return new THREE.Vector3(dist, dist * 0.95, dist);
-  }, [cameraMode, size]);
+
+    const requiredSpan = (size + 3.5) * 1.16;
+    const distForWidth = requiredSpan / (2 * tanHalfFov * effectiveAspect);
+    const distForHeight = requiredSpan / (2 * tanHalfFov);
+    const baseDist = Math.max(distForWidth, distForHeight) * 0.72;
+    return new THREE.Vector3(baseDist, baseDist * 0.95, baseDist);
+  }, [cameraMode, size, aspect]);
 
   const targetCamUp = useMemo(() => {
     return cameraMode === 'scan' ? new THREE.Vector3(0, 0, -1) : new THREE.Vector3(0, 1, 0);
   }, [cameraMode]);
 
   const targetLookAt = useMemo(() => {
-    return cameraMode === 'scan' ? new THREE.Vector3(0, 0, 0) : new THREE.Vector3(0, 2.0, 0);
-  }, [cameraMode]);
-
-  // Trigger camera transition ONLY when cameraMode changes
-  useEffect(() => {
-    startCamPosRef.current.copy(camera.position);
-    startCamUpRef.current.copy(camera.up);
-    if (controlsRef.current) {
-      startTargetRef.current.copy(controlsRef.current.target);
+    if (cameraMode === 'scan') {
+      const offsetZ = isPortrait ? size * 0.08 : 0;
+      return new THREE.Vector3(0, 0, offsetZ);
     }
-    transitionStartRef.current = performance.now();
-    isTransitioningRef.current = true;
-  }, [cameraMode, camera, size]);
+    const offsetY = isPortrait ? 1.0 : 2.0;
+    return new THREE.Vector3(0, offsetY, 0);
+  }, [cameraMode, isPortrait, size]);
 
+  // Trigger camera transition ONLY when cameraMode actually switches (Scan <-> Orbit)
+  useEffect(() => {
+    if (prevCameraModeRef.current !== cameraMode) {
+      prevCameraModeRef.current = cameraMode;
+      startCamPosRef.current.copy(camera.position);
+      startCamUpRef.current.copy(camera.up);
+      if (controlsRef.current) {
+        startTargetRef.current.copy(controlsRef.current.target);
+      }
+      transitionStartRef.current = performance.now();
+      isTransitioningRef.current = true;
+    }
+  }, [cameraMode, camera]);
+
+  // Cancel any active camera transition immediately when user touches/drags with OrbitControls
+  useEffect(() => {
+    const controls = controlsRef.current;
+    if (!controls) return;
+
+    const handleUserInteraction = () => {
+      isTransitioningRef.current = false;
+    };
+
+    controls.addEventListener('start', handleUserInteraction);
+    return () => {
+      controls.removeEventListener('start', handleUserInteraction);
+    };
+  }, []);
   // Ultra-Lightweight Frame Loop: 0 voxel loops when idle, smooth camera transitions
   const frameCountRef = useRef(0);
   const lastFpsTimeRef = useRef(0);
@@ -149,25 +186,28 @@ export function VoxelScene({
         intensity={cameraMode === 'scan' ? 1.2 : 1.35}
         color="#ffffff"
         castShadow={cameraMode !== 'scan'}
-        shadow-mapSize-width={1024}
-        shadow-mapSize-height={1024}
+        shadow-mapSize-width={isPortrait ? 512 : 1024}
+        shadow-mapSize-height={isPortrait ? 512 : 1024}
         shadow-bias={-0.0002}
       />
       {cameraMode !== 'scan' && (
         <directionalLight position={[-20, 25, -20]} intensity={0.3} color="#ffffff" />
       )}
 
-      {/* 360-degree Orbit Controls */}
+      {/* 360-degree Orbit Controls with Mobile Touch Support */}
       <OrbitControls
         ref={controlsRef}
         makeDefault
         minDistance={4}
-        maxDistance={150}
+        maxDistance={400}
         maxPolarAngle={Math.PI / 2 - 0.02}
-        minPolarAngle={0.02}
         enableDamping
         dampingFactor={0.08}
-        rotateSpeed={0.85}
+        rotateSpeed={0.75}
+        touches={{
+          ONE: THREE.TOUCH.ROTATE,
+          TWO: THREE.TOUCH.DOLLY_PAN,
+        }}
       />
 
       {/* 1-Draw-Call InstancedMesh */}
@@ -181,9 +221,9 @@ export function VoxelScene({
         <meshStandardMaterial roughness={0.65} metalness={0.05} />
       </instancedMesh>
 
-      {/* Seamless Pristine White Baseplate */}
-      <mesh position={[0, -0.01, 0]} receiveShadow={false}>
-        <boxGeometry args={[baseplateSize, 0.04, baseplateSize]} />
+      {/* 1. Seamless Pristine White Baseplate (Top flush at y = 0 to eliminate Z-fighting) */}
+      <mesh position={[0, -0.04, 0]} receiveShadow={false}>
+        <boxGeometry args={[baseplateSize, 0.08, baseplateSize]} />
         <meshStandardMaterial
           color={theme.plinth?.topColor || '#ffffff'}
           roughness={0.2}
@@ -191,8 +231,8 @@ export function VoxelScene({
         />
       </mesh>
 
-      {/* Themed Architectural Pedestal Base */}
-      <group position={[0, -0.05, 0]}>
+      {/* 2. Themed Architectural Pedestal Base */}
+      <group position={[0, -0.08, 0]}>
         <mesh position={[0, 0.03, 0]}>
           <boxGeometry args={[baseplateSize + 0.12, 0.03, baseplateSize + 0.12]} />
           <meshStandardMaterial

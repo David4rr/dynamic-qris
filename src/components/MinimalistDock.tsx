@@ -136,12 +136,12 @@ export function MinimalistDock({
   return (
     <>
       {/* Floating Bottom Neobrutalism Control Dock */}
-      <div className="absolute bottom-4 left-4 right-4 max-w-5xl mx-auto z-40 font-mono select-none">
-        <NeoCard className="p-2.5 sm:p-3 flex flex-col md:flex-row items-center justify-between gap-2.5 bg-[#FFFDF5]">
+      <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4 max-w-5xl mx-auto z-40 font-mono select-none">
+        <NeoCard className="p-2 sm:p-3 flex flex-col md:flex-row items-center justify-between gap-2 sm:gap-2.5 bg-[#FFFDF5]">
           {/* Section 1: Mode-Specific Input */}
           {qrMode === 'qris' ? (
             <div className="flex items-center gap-1.5 w-full md:w-auto">
-              <div className="w-32 sm:w-36">
+              <div className="flex-1 sm:w-36 sm:flex-initial">
                 <NeoInput
                   prefixLabel="RP"
                   type="number"
@@ -159,7 +159,7 @@ export function MinimalistDock({
                   size="sm"
                   variant="destructive"
                   onClick={() => setAmount(0)}
-                  className="px-2 py-1 text-xs"
+                  className="px-2 py-1 text-[11px] sm:text-xs shrink-0"
                   title="Clear Amount"
                 >
                   <X className="w-3 h-3 mr-0.5 stroke-[2.5]" />
@@ -169,7 +169,7 @@ export function MinimalistDock({
             </div>
           ) : (
             <div className="flex items-center gap-1.5 w-full md:w-auto">
-              <div className="w-56 sm:w-72">
+              <div className="flex-1 sm:w-72 sm:flex-initial">
                 <NeoInput
                   prefixLabel="URL"
                   type="url"
@@ -189,7 +189,7 @@ export function MinimalistDock({
                   onClick={() =>
                     setLinkConfig((prev) => ({ ...prev, url: '' }))
                   }
-                  className="px-2 py-1 text-xs"
+                  className="px-2 py-1 text-[11px] sm:text-xs shrink-0"
                   title="Clear URL"
                 >
                   <X className="w-3 h-3 mr-0.5 stroke-[2.5]" />
@@ -198,9 +198,8 @@ export function MinimalistDock({
               )}
             </div>
           )}
-
-          {/* Section 2: Theme Buttons */}
-          <div className="flex items-center gap-1.5 justify-center">
+          {/* Section 2: Theme Buttons (Smooth Mobile Scroll, Visible on Desktop) */}
+          <div className="flex items-center gap-1 sm:gap-1.5 justify-center overflow-x-auto sm:overflow-visible max-w-full px-1 py-1 no-scrollbar">
             {THEME_LIST.map((th) => {
               const isSelected = th.id === selectedThemeId;
               const label = THEME_LABELS[th.id] || th.name.toUpperCase();
@@ -211,7 +210,7 @@ export function MinimalistDock({
                   size="sm"
                   variant={isSelected ? 'primary' : 'neutral'}
                   onClick={() => setSelectedThemeId(th.id)}
-                  className="px-2.5 py-1 text-xs font-black whitespace-nowrap"
+                  className="px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs font-black whitespace-nowrap shrink-0"
                 >
                   <span>{label}</span>
                 </NeoButton>
@@ -220,7 +219,7 @@ export function MinimalistDock({
           </div>
 
           {/* Section 3: Action Buttons */}
-          <div className="flex items-center gap-1.5 w-full md:w-auto justify-end">
+          <div className="flex items-center gap-1 sm:gap-1.5 w-full md:w-auto justify-between sm:justify-end">
             {qrMode === 'qris' ? (
               <NeoButton
                 type="button"
@@ -228,10 +227,10 @@ export function MinimalistDock({
                 variant="neutral"
                 onClick={() => setShowSettingsModal(true)}
                 title="Configure Merchant Details"
-                className="px-2.5 py-1 text-xs"
+                className="flex-1 sm:flex-initial px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs"
               >
-                <Store className="w-3.5 h-3.5 mr-1 stroke-[2.2]" />
-                <span className="hidden sm:inline">MERCHANT</span>
+                <Store className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.2]" />
+                <span>MERCHANT</span>
               </NeoButton>
             ) : (
               <NeoButton
@@ -240,10 +239,10 @@ export function MinimalistDock({
                 variant="neutral"
                 onClick={() => setShowSettingsModal(true)}
                 title="Configure Link & Templates"
-                className="px-2.5 py-1 text-xs"
+                className="flex-1 sm:flex-initial px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs"
               >
-                <Globe className="w-3.5 h-3.5 mr-1 stroke-[2.2]" />
-                <span className="hidden sm:inline">LINK CFG</span>
+                <Globe className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.2]" />
+                <span>LINK CFG</span>
               </NeoButton>
             )}
 
@@ -254,12 +253,12 @@ export function MinimalistDock({
               onClick={handleDownloadPNG}
               disabled={isExportingPNG}
               title="Download Printable PNG Card"
-              className="px-3 py-1 text-xs"
+              className="flex-1 sm:flex-initial px-2 sm:px-3 py-1 text-[11px] sm:text-xs"
             >
               {isExportingPNG ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin mr-1 stroke-[2.2]" />
+                <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin mr-0.5 sm:mr-1 stroke-[2.2]" />
               ) : (
-                <ImageIcon className="w-3.5 h-3.5 mr-1 stroke-[2.2]" />
+                <ImageIcon className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.2]" />
               )}
               <span>PNG</span>
             </NeoButton>
@@ -271,12 +270,12 @@ export function MinimalistDock({
               onClick={handleExportGLB}
               disabled={isExportingGLB}
               title="Export 3D Model (.GLB)"
-              className="px-2.5 py-1 text-xs"
+              className="flex-1 sm:flex-initial px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs"
             >
               {isExportingGLB ? (
-                <Loader2 className="w-3.5 h-3.5 animate-spin mr-1 stroke-[2.2]" />
+                <Loader2 className="w-3 h-3 sm:w-3.5 sm:h-3.5 animate-spin mr-0.5 sm:mr-1 stroke-[2.2]" />
               ) : (
-                <Box className="w-3.5 h-3.5 mr-1 stroke-[2.2]" />
+                <Box className="w-3 h-3 sm:w-3.5 sm:h-3.5 mr-0.5 sm:mr-1 stroke-[2.2]" />
               )}
               <span>GLB</span>
             </NeoButton>
@@ -287,12 +286,12 @@ export function MinimalistDock({
               variant="neutral"
               onClick={handleCopy}
               title="Copy EMVCo Payload"
-              className="px-2.5 py-1 text-xs"
+              className="px-2 sm:px-2.5 py-1 text-[11px] sm:text-xs shrink-0"
             >
               {copied ? (
-                <CheckCheck className="w-3.5 h-3.5 text-emerald-600 stroke-[2.5]" />
+                <CheckCheck className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-emerald-600 stroke-[2.5]" />
               ) : (
-                <Copy className="w-3.5 h-3.5 stroke-[2.2]" />
+                <Copy className="w-3 h-3 sm:w-3.5 sm:h-3.5 stroke-[2.2]" />
               )}
             </NeoButton>
           </div>
