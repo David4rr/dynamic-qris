@@ -118,7 +118,7 @@ export const VOXEL_THEMES: Record<VoxelTheme['id'], VoxelTheme> = {
     lightPalette: {
       ground: '#ffffff', // Pure white clearing
       pathway: '#fef3c7', // Sandy trail
-      water: '#0284c7', // Mountain river blue
+      water: '#7dd3fc', // Mountain river ice blue (high luminance)
       sand: '#ffffff',
     },
     finderAnchor: {
@@ -212,7 +212,7 @@ export const VOXEL_THEMES: Record<VoxelTheme['id'], VoxelTheme> = {
     lightPalette: {
       ground: '#ffffff', // Pure white beach sand
       pathway: '#fef3c7', // Sandy dune trail
-      water: '#0284c7', // Crystal azure ocean
+      water: '#38bdf8', // Crystal azure ocean (high luminance)
       sand: '#ffffff',
     },
     finderAnchor: {

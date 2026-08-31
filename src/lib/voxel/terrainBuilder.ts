@@ -96,7 +96,7 @@ export function buildGroundTileVoxels(
     const isTrail = (r * 2 + c) % 5 === 0 || Math.abs(x - z) <= 1;
 
     if (isCreek) {
-      list.push({ x, y: 0.02, z, sx: 0.96, sy: 0.04, sz: 0.96, color: '#0284c7' });
+      list.push({ x, y: 0.02, z, sx: 0.96, sy: 0.04, sz: 0.96, color: '#7dd3fc' });
     } else if (isTrail) {
       list.push({ x, y: 0.06, z, sx: 0.94, sy: 0.08, sz: 0.94, color: '#fef3c7' });
     } else {
@@ -110,7 +110,7 @@ export function buildGroundTileVoxels(
     if (isPoolWater) {
       list.push({ x, y: 0.02, z, sx: 0.96, sy: 0.04, sz: 0.96, color: '#38bdf8' });
     } else if (isTeakWalkway) {
-      list.push({ x, y: 0.06, z, sx: 0.94, sy: 0.08, sz: 0.94, color: '#b45309' });
+      list.push({ x, y: 0.06, z, sx: 0.94, sy: 0.08, sz: 0.94, color: '#fde68a' });
     } else {
       list.push({ x, y: 0.03, z, sx: 0.96, sy: 0.06, sz: 0.96, color: '#ffffff' });
     }
@@ -120,9 +120,9 @@ export function buildGroundTileVoxels(
     const isBoardwalk = (r - c) % 5 === 0;
 
     if (isOceanSurf) {
-      list.push({ x, y: 0.02, z, sx: 0.96, sy: 0.04, sz: 0.96, color: '#0284c7' });
+      list.push({ x, y: 0.02, z, sx: 0.96, sy: 0.04, sz: 0.96, color: '#38bdf8' });
     } else if (isBoardwalk) {
-      list.push({ x, y: 0.06, z, sx: 0.94, sy: 0.08, sz: 0.94, color: '#92400e' });
+      list.push({ x, y: 0.06, z, sx: 0.94, sy: 0.08, sz: 0.94, color: '#fed7aa' });
     } else {
       list.push({ x, y: 0.03, z, sx: 0.96, sy: 0.06, sz: 0.96, color: '#ffffff' });
     }
