@@ -194,6 +194,28 @@ export function VoxelScene({
         <directionalLight position={[-20, 25, -20]} intensity={0.3} color="#ffffff" />
       )}
 
+      {/* Coastal Lighthouse Glowing Fresnel Beacon Light (3D Orbit Mode) */}
+      {theme.id === 'cyberpunk' && cameraMode !== 'scan' && (
+        <>
+          <pointLight
+            position={[0.55, 11.2 * heightMultiplier, -0.3]}
+            color="#fef08a"
+            intensity={3.2}
+            distance={28}
+            decay={1.6}
+          />
+          <spotLight
+            position={[0.55, 11.2 * heightMultiplier, -0.3]}
+            target-position={[12, 4, -10]}
+            color="#fef9c3"
+            intensity={4.5}
+            angle={Math.PI / 5}
+            penumbra={0.5}
+            distance={40}
+          />
+        </>
+      )}
+
       {/* 360-degree Orbit Controls with Mobile Touch Support */}
       <OrbitControls
         ref={controlsRef}

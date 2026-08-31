@@ -4,6 +4,7 @@ import type { VoxelBlock } from './types';
 import { buildJapanesePagoda } from './pagodaBuilder';
 import { buildModernVilla } from './villaBuilder';
 import { buildLighthouse } from './lighthouseBuilder';
+import { buildAlpineCabin } from './cabinBuilder';
 import {
   buildFinderAnchorVoxels,
   buildGroundTileVoxels,
@@ -54,7 +55,7 @@ export function generateSceneVoxels(
       }
 
       // B. Central Zone: Skip cells handled by 3D Landmark
-      if (dist <= landmarkRadius && themeId !== 'forest-cabin') {
+      if (dist <= landmarkRadius) {
         if (isDark) {
           list.push({
             x,
@@ -101,6 +102,8 @@ export function generateSceneVoxels(
   // 2. Central 3D Architectural Landmark Masterpieces
   if (themeId === 'japanese-garden') {
     list.push(...buildJapanesePagoda(heightMultiplier));
+  } else if (themeId === 'forest-cabin') {
+    list.push(...buildAlpineCabin(heightMultiplier));
   } else if (themeId === 'modern-villa') {
     list.push(...buildModernVilla(heightMultiplier));
   } else if (themeId === 'cyberpunk') {

@@ -69,13 +69,19 @@ describe('Voxel QR Top-Down Scannability', () => {
     'cyberpunk',
   ];
 
-  it('scans Link QR across all themes', () => {
-    const linkUrl = 'https://instagram.com/mybrand';
-    const matrix = generateQRMatrix(linkUrl, 'H');
+  it('scans Link QR across all themes for various URL lengths', () => {
+    const sampleUrls = [
+      'https://instagram.com/',
+      'https://wa.me/628123456789',
+      'https://github.com',
+    ];
 
-    for (const themeId of testThemes) {
-      const decoded = scanSceneTopDown(matrix, themeId);
-      expect(decoded).toBe(linkUrl);
+    for (const linkUrl of sampleUrls) {
+      const matrix = generateQRMatrix(linkUrl, 'H');
+      for (const themeId of testThemes) {
+        const decoded = scanSceneTopDown(matrix, themeId);
+        expect(decoded).toBe(linkUrl);
+      }
     }
   });
 
